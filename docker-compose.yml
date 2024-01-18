@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./build/dockerfiles/app/Dockerfile
+    volumes:
+      - ./app:/usr/local/go/src/web/app
+      - .env:/usr/local/go/src/web/app/.env
+    tty: true
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+
+  db:
+    build:
+      context: .
+      dockerfile: ./build/dockerfiles/db/Dockerfile
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db-store:/var/lib/postgresql/data
+      - ./app/database/init:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
+
+volumes:
+  db-store:
