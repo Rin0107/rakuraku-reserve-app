@@ -6,8 +6,9 @@ import(
 
 func GetRouter() *gin.Engine{
 	r := gin.Default()
-	r.LoadHTMLGlob("views/*html")
+	r.LoadHTMLGlob("view/*html")
 	r.GET("/", Index)
 	r.GET("/user", GetUser)
+	r.POST("/create/user", PostCreate)
 	return r
 }
