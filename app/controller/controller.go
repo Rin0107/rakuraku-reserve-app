@@ -1,6 +1,8 @@
 package controller
 
 import(
+	"app/model"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +12,8 @@ type User struct{
 }
 
 func Index(c *gin.Context){
-	c.HTML(200, "index.html", gin.H{})
+	users := model.GetAll()
+	c.HTML(200, "index.html", gin.H{"users": users})
 }
 
 func GetUser(c *gin.Context){
@@ -19,4 +22,13 @@ func GetUser(c *gin.Context){
 		Name: "タロウ",
 	}
 	c.IndentedJSON(200, user)
+}
+
+func PostCreate(c *gin.Context) {
+	name := c.PostForm("name")
+	password := c.PostForm("password")
+	user := model.User{Name: name, Password: password}
+	user.Create()
+	c.IndentedJSON(200, user)
+	// c.Redirect(301, "/")
 }
