@@ -26,8 +26,9 @@ func GetUser(c *gin.Context){
 
 func PostCreate(c *gin.Context) {
 	name := c.PostForm("name")
+	email := c.PostForm("email")
 	password := c.PostForm("password")
-	user := model.User{Name: name, Password: password}
+	user := model.User{Name: name, Email: email, Password: password}
 	user.Create()
 	c.IndentedJSON(200, user)
 	// c.Redirect(301, "/")
