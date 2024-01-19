@@ -18,8 +18,8 @@ func GetAll() (users []User) {
 	return
 }
 
-func (b *User) Create() {
-	result := Db.Create(b)
+func (u *User) Create() {
+	result := Db.Create(u)
 	if result.Error != nil {
 		panic(result.Error)
 	}
