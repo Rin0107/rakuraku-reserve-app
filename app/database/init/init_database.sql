@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS event_join_users(
     user_id INTEGER NOT NULL,
     event_id INTEGER NOT NULL,
     deleted_at TIMESTAMP,
-    is_orner BOOLEAN NOT NULL,
+    is_owner BOOLEAN NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (event_id) REFERENCES events(event_id)
 );
@@ -133,7 +133,7 @@ INSERT INTO inquiries (user_id, body) VALUES
 SELECT * FROM inquiries;
 
 -- event_join_usersテーブルにデータを挿入
-INSERT INTO event_join_users (user_id, event_id, deleted_at, is_orner) VALUES
+INSERT INTO event_join_users (user_id, event_id, deleted_at, is_owner) VALUES
 (1, 1, NULL, true),
 (2, 1, NULL, false);
 -- event_join_usersテーブルのデータを確認
