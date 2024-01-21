@@ -6,7 +6,7 @@ import (
 
 type Equipment struct {
 	gorm.Model `json:"-"`
-	EqupmentId int
+	EquipmentId int
 	Name string
 	Explanation string
 	EquipmentCategoryId int
