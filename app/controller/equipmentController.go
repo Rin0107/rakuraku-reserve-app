@@ -7,11 +7,11 @@ import (
 )
 
 func GetEquipments(c *gin.Context){
-	equiments := service.GetEquipments()
-	switch len(equiments){
+	equipments := service.GetEquipments()
+	switch len(equipments){
 	case 0:
-		c.IndentedJSON(404, equiments)
+		c.IndentedJSON(404, equipments)
 	default:
-		c.IndentedJSON(200, equiments)
+		c.IndentedJSON(200, equipments)
 	}
 }

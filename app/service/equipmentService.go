@@ -4,7 +4,7 @@ import(
 	"app/model"
 )
 
-func GetEquipments() []model.Equiments{
-	equiments := model.GetEquipments()
-	return equiments
+func GetEquipments() []model.Equipments{
+	equipments := model.GetEquipments()
+	return equipments
 }

@@ -1,28 +1,26 @@
 package model
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
-type Equpment struct {
+type Equipment struct {
 	gorm.Model `json:"-"`
 	EqupmentId int
 	Name string
 	Explanation string
 	EquipmentCategoryId int
-	EqupmentImg string
+	EquipmentImg string
 	IsAvailable bool
 }
 
-func GetAll() (equiments []Equiment) {
-	result := Db.Find(&equiments)
-	if result.Error != nil {
-		panic(result.Error)
-	}
-	return
-}
+// func GetAll() (equiments []Equiment) {
+// 	result := Db.Find(&equiments)
+// 	if result.Error != nil {
+// 		panic(result.Error)
+// 	}
+// 	return
+// }
 
 // func (u *User) Create() {
 // 	result := Db.Create(u)
@@ -32,8 +30,8 @@ func GetAll() (equiments []Equiment) {
 // 	return
 // }
 
-func GetEquipments()(equiments []Equiment){
-	result := Db.Where("is_available IS true").Find(&equiments)
+func GetEquipments()(equipments []Equipment){
+	result := Db.Where("is_available IS true").Find(&equipments)
 	if result.Error != nil {
 		panic(result.Error)
 	}
