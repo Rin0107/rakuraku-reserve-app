@@ -1,13 +1,13 @@
 package controller
 
-import(
-	"app/model"
+import (
+	"app/service"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetUsers(c *gin.Context){
-	users := model.GetUsers()
+	users := service.GetUsers()
 	switch len(users){
 	case 0:
 		c.IndentedJSON(404, users)
