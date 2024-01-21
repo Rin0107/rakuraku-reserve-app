@@ -31,7 +31,7 @@ type Equipment struct {
 // }
 
 func GetEquipments()(equipments []Equipment){
-	result := Db.Where("is_available IS true").Find(&equipments)
+	result := Db.Where("is_available = true").Find(&equipments)
 	if result.Error != nil {
 		panic(result.Error)
 	}
