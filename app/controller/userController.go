@@ -8,5 +8,10 @@ import(
 
 func GetUsers(c *gin.Context){
 	users := model.GetUsers()
-	c.IndentedJSON(200, users)
+	switch len(users){
+	case 0:
+		c.IndentedJSON(404, users)
+	default:
+		c.IndentedJSON(200, users)
+	}
 }
