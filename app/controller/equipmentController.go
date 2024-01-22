@@ -17,14 +17,14 @@ func GetEquipments(c *gin.Context){
 }
 
 func GetEquipmentById(c *gin.Context){
-	strEquipmentId :=c.Param("equipmentId")
-	equipmentId, _ := strconv.Atoi(strEquipmentId)
-	equipment := service.GetEquipmentById(equipmentId)
-	c.IndentedJSON(200, equipment)
-	// switch (equipment){
-	// case false:
-	// 	c.IndentedJSON(404, equipment)
-	// default:
-	// 	c.IndentedJSON(200, equipment)
-	// }
+	strEquipmentId :=c.Param("equipmentId");
+	//pathから受け取ったstring型をint型に変換
+	equipmentId, _ := strconv.Atoi(strEquipmentId);
+	equipment := service.GetEquipmentById(equipmentId);
+	switch equipment.EquipmentId{
+	case 0:
+		c.IndentedJSON(404, equipment)
+	default:
+		c.IndentedJSON(200, equipment)
+	}
 }
