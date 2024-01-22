@@ -43,3 +43,11 @@ func GetUsers()(users []User){
 	}
 	return
 }
+
+func CreateUsers(user User)(){
+	result:=Db.Create(user)
+	if result.Error != nil {
+	panic(result.Error)
+	}
+	return
+}
