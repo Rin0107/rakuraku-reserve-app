@@ -1,11 +1,11 @@
 package model
 
 import (
-	"gorm.io/gorm"
+	// "gorm.io/gorm"
 )
 
-type Equipment struct {
-	gorm.Model `json:"-"`
+type Equipments struct {
+	// gorm.Model `json:"-"`
 	EquipmentId int
 	Name string
 	Explanation string
@@ -30,7 +30,7 @@ type Equipment struct {
 // 	return
 // }
 
-func GetEquipments()(equipments []Equipment){
+func GetEquipments()(equipments []Equipments){
 	result := Db.Where("is_available = true").Find(&equipments)
 	if result.Error != nil {
 		panic(result.Error)
