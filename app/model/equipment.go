@@ -31,6 +31,7 @@ type Equipment struct {
 // }
 
 func GetEquipments()(equipments []Equipment){
+	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
 	result := Db.Table("equipments").Where("is_available = true").Find(&equipments)
 	if result.Error != nil {
 		panic(result.Error)
