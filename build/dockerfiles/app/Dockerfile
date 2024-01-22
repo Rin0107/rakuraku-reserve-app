@@ -14,4 +14,6 @@ RUN apk update \
 && go mod init app \
 && apk add git
 
+CMD ["go", "run", "main.go"]
+
 EXPOSE 8080
