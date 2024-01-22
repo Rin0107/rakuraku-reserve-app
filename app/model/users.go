@@ -20,22 +20,6 @@ type User struct {
     DeletedAt gorm.DeletedAt
 }
 
-func GetAll() (users []User) {
-	result := Db.Find(&users)
-	if result.Error != nil {
-		panic(result.Error)
-	}
-	return
-}
-
-// func (u *User) Create() {
-// 	result := Db.Create(u)
-// 	if result.Error != nil {
-// 		panic(result.Error)
-// 	}
-// 	return
-// }
-
 func GetUsers()(users []User){
 	result := Db.Where("deleted_at IS NULL").Find(&users)
 	if result.Error != nil {
