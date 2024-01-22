@@ -40,7 +40,7 @@ func GetEquipments()(equipments []Equipment){
 }
 func GetEquipmentById(equipmentId int)(equipment Equipment){
 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
-	result := Db.Table("equipments").Where("is_available = true AND equipment_id = ?",equipmentId).First(&equipment)
+	result := Db.Table("equipments").Where("is_available = true").First(&equipment,equipmentId)
 	if result.Error != nil {
 		panic(result.Error)
 	}
