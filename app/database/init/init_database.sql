@@ -151,7 +151,8 @@ SELECT * FROM announcements;
 -- equipmentsテーブルにデータを挿入
 INSERT INTO equipments (name, explanation, equipment_category_id, equipment_img, is_available) VALUES
 ('Equipment 1', 'Description for Equipment 1', 1, 'equipment_img1.jpg', true),
-('Equipment 2', 'Description for Equipment 2', 2, 'equipment_img2.jpg', true);
+('Equipment 2', 'Description for Equipment 2', 2, 'equipment_img2.jpg', true),
+('Equipment 3', 'Description for Equipment 3', 2, 'equipment_img2.jpg', false);
 -- equipmentsテーブルのデータを確認
 SELECT * FROM equipments;
 
