@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS users(
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     user_icon VARCHAR(255) NOT NULL,
+    role VARCHAR(255) NOT NULL,
+    password_reset_token VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
@@ -98,9 +100,9 @@ CREATE TABLE IF NOT EXISTS equipment_reservations(
 );
 
 -- usersテーブルにデータを挿入
-INSERT INTO users (name, email, password, user_icon) VALUES
-('John Doe', 'john@example.com', 'hashed_password', 'user_icon.jpg'),
-('Jane Doe', 'jane@example.com', 'hashed_password', 'user_icon.jpg');
+INSERT INTO users (name, email, password, user_icon, role) VALUES
+('John Doe', 'john@example.com', 'hashed_password', 'user_icon.jpg', 'admin'),
+('Jane Doe', 'jane@example.com', 'hashed_password', 'user_icon.jpg', 'user');
 -- usersテーブルのデータを確認
 SELECT * FROM users;
 

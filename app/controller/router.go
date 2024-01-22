@@ -11,5 +11,6 @@ func GetRouter() *gin.Engine{
 	r.GET("/user", GetUser)
 	r.GET("/api/equipments/", GetEquipments)
 	r.POST("/create/user", PostCreate)
+	r.GET("/api/admin/users", GetUsers)
 	return r
 }
