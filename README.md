@@ -1,4 +1,7 @@
-## 手順
+## プルリクテンプレート使い方
+?template=simple.md
+
+## 環境構築手順
 1. リモートレポジトリをクローンする
     - `$ git clone git@github.com:tetsu-777/rakuraku-reserve-app.git`
 
