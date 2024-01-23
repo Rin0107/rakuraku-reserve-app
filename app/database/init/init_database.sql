@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users(
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    user_icon VARCHAR(255) NOT NULL,
+    user_icon VARCHAR(255),
     role VARCHAR(255) NOT NULL,
     password_reset_token VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

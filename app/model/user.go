@@ -7,8 +7,7 @@ import (
 )
 
 type User struct {
-	gorm.Model `json:"-"`
-	UserId int
+	UserId int `gorm:"primaryKey;autoIncrement"`
 	Name string
 	Email string
 	Password string
@@ -33,9 +32,11 @@ func CreateUsers(name,email,role string)(){
 	user.Name=name
 	user.Email=email
 	user.Role=role
-	// result:=Db.Create(user)
-	// if result.Error != nil {
-	// panic(result.Error)
-	// }
+	user.Password="password"
+	
+	result:=Db.Select("Name","Email","Role","Password").Create(&user)
+	if result.Error != nil {
+	panic(result.Error)
+	}
 	return
 }
