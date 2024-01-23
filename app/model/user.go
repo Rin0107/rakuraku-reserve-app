@@ -28,10 +28,14 @@ func GetUsers()(users []User){
 	return
 }
 
-func CreateUsers(user User)(){
-	result:=Db.Create(user)
-	if result.Error != nil {
-	panic(result.Error)
-	}
+func CreateUsers(name,email,role string)(){
+	user:=User{}
+	user.Name=name
+	user.Email=email
+	user.Role=role
+	// result:=Db.Create(user)
+	// if result.Error != nil {
+	// panic(result.Error)
+	// }
 	return
 }

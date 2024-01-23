@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
+	"app/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +19,6 @@ func CreateUsers(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// service.CreateUsers(user)
-	fmt.Println(user)
+	service.CreateUsers(user.Name,user.Email,user.Role)
 	c.IndentedJSON(201, user)
 }
