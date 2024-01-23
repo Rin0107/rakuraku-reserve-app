@@ -7,10 +7,9 @@ import(
 func GetRouter() *gin.Engine{
 	r := gin.Default()
 	r.LoadHTMLGlob("view/*html")
-	r.GET("/", Index)
-	r.GET("/user", GetUser)
 	r.GET("/api/equipments/", GetEquipments)
-	r.POST("/create/user", PostCreate)
 	r.GET("/api/admin/users", GetUsers)
+	// event-related API
+	r.POST("/api/events", InsertEvent)
 	return r
 }
