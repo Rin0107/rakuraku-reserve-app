@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//機材一覧を取得するAPI（is_availableがtrue）
 func GetEquipments(c *gin.Context){
 	equipments := service.GetEquipments()
 	switch len(equipments){
@@ -16,6 +17,7 @@ func GetEquipments(c *gin.Context){
 	}
 }
 
+//機材の詳細情報を取得(idにて取得)
 func GetEquipmentById(c *gin.Context){
 	strEquipmentId :=c.Param("equipmentId");
 	//pathから受け取ったstring型をint型に変換
