@@ -23,10 +23,10 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - db-store:/var/lib/postgresql/data
+      # - db-store:/var/lib/postgresql/data
       - ./app/database/init:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
 
-volumes:
-  db-store:
+# volumes:
+#   db-store:
