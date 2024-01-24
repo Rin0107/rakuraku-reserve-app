@@ -43,17 +43,11 @@ func CreateUsers(c *gin.Context) {
 	validateErr := validate.Struct(user)
 	if validateErr!=nil{
 		for _, err := range validateErr.(validator.ValidationErrors) {
-			fmt.Println(err.Namespace())
-			fmt.Println(err.Field())
-			fmt.Println(err.StructNamespace())
-			fmt.Println(err.StructField())
-			fmt.Println(err.Tag())
-			fmt.Println(err.ActualTag())
-			fmt.Println(err.Kind())
-			fmt.Println(err.Type())
-			fmt.Println(err.Value())
-			fmt.Println(err.Param())
-			fmt.Println()
+			fmt.Println("Namespace =",err.Namespace())
+			fmt.Println("Tag =",err.Tag())
+			fmt.Println("Type =",err.Type())
+			fmt.Println("Value =",err.Value())
+			fmt.Println("Param =",err.Param())
 		}
 		var errorMessage Error
 		errorMessage.Message="登録が失敗しました"
