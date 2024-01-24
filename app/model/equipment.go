@@ -2,12 +2,13 @@ package model
 
 import (
 	// "gorm.io/gorm"
+	// "github.com/go-playground/validator/v10"
 )
 
 type Equipment struct {
 	// gorm.Model `json:"-"`
 	EquipmentId int
-	Name string
+	Name string 
 	Explanation string
 	EquipmentCategoryId int
 	EquipmentImg string
