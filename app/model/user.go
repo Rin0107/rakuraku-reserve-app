@@ -1,12 +1,13 @@
 package model
 
 import (
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
 )
 
+// usersテーブル情報
+// userIdをprimaryKeyに指定している
 type User struct {
 	UserId int `gorm:"primaryKey;autoIncrement"`
 	Name string
@@ -20,6 +21,8 @@ type User struct {
     DeletedAt gorm.DeletedAt
 }
 
+// DBからユーザー一覧を取得するためのメソッド
+// 削除されていないユーザーを取得（deleted_at IS NULL）
 func GetUsers()(users []User){
 	result := Db.Where("deleted_at IS NULL").Find(&users)
 	if result.Error != nil {
@@ -28,6 +31,8 @@ func GetUsers()(users []User){
 	return
 }
 
+// ユーザーを登録するためのメソッド
+// パスワードをデフォルトでpasswordに設定（仕様にて変更あり）
 func CreateUsers(name,email,role string)(){
 	user:=User{}
 	user.Name=name
@@ -42,9 +47,9 @@ func CreateUsers(name,email,role string)(){
 	return
 }
 
+// メール情報からユーザー情報を取得するためのメソッド
 func IsEmail(email string) (users []User){
 	result := Db.Where("email=?",email).Find(&users)
-	fmt.Println(email)
 	if result.Error != nil {
 		panic(result.Error)
 	}
