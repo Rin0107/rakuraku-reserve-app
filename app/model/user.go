@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -37,6 +38,15 @@ func CreateUsers(name,email,role string)(){
 	result:=Db.Select("Name","Email","Role","Password").Create(&user)
 	if result.Error != nil {
 	panic(result.Error)
+	}
+	return
+}
+
+func IsEmail(email string) (users []User){
+	result := Db.Where("email=?",email).Find(&users)
+	fmt.Println(email)
+	if result.Error != nil {
+		panic(result.Error)
 	}
 	return
 }

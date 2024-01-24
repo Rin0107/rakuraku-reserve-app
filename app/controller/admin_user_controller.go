@@ -11,10 +11,13 @@ import (
 
 type User struct {
 	Name  string `json:"name" validate:"required,gte=0,lte=100"`
-	Email string `json:"email" validate:"required,email"`
+	Email string `json:"email" validate:"email,email_unique_validation"`
 	Role  string `json:"role" validate:"oneof=admin user"`
 }
 
+type Error struct{
+	Message string
+}
 var validate *validator.Validate
 
 func CreateUsers(c *gin.Context) {
@@ -25,6 +28,7 @@ func CreateUsers(c *gin.Context) {
 	}
 
 	validate = validator.New()
+	validate.RegisterValidation("email_unique_validation",emailUniqueValidation)
 	validateErr := validate.Struct(user)
 	if validateErr!=nil{
 		for _, err := range validateErr.(validator.ValidationErrors) {
@@ -40,8 +44,17 @@ func CreateUsers(c *gin.Context) {
 			fmt.Println(err.Param())
 			fmt.Println()
 		}
-		c.IndentedJSON(400, user)
+		var errorMessage Error
+		errorMessage.Message="登録が失敗しました"
+		c.IndentedJSON(400, errorMessage)
+	}else{
+		service.CreateUsers(user.Name,user.Email,user.Role)
+		c.IndentedJSON(201, user)
 	}
-	service.CreateUsers(user.Name,user.Email,user.Role)
-	c.IndentedJSON(201, user)
+	
+}
+
+func emailUniqueValidation(fl validator.FieldLevel) bool{
+	email := fl.Field().String()
+	return service.IsEmail(email)
 }
