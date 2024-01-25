@@ -9,11 +9,6 @@ func GetEquipments() []model.Equipment{
 	return equipments
 }
 
-// func GetEquipmentById(equipmentId int) model.Equipment{
-// 	// equipment := model.GetDetailEquipment(equipmentId int)
-// 	return 1;
-// }
-
 /*機材をIDから1つだけ取得する。*/
 func GetEquipmentById(equipmentId int) model.Equipment{
 	equipment := model.GetEquipmentById(equipmentId)
