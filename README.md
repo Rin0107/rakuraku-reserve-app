@@ -14,16 +14,9 @@
 4. コンテナ作成＆起動
     - `$ docker compose up -d`
 
-5. dbコンテナに入り、tableを作成
+5. dbコンテナに入り方
     - `$ docker compose exec -it db bash`
-    - `$ psql -U postgres -d app`
-    - `$ \i docker-entrypoint-initdb.d/init_database.sql`
-    - `$ \q`
-    - `$ exit`
 
-6. appコンテナに入り、アプリを起動
+6. appコンテナに入り方＆アプリを起動方法
     - `$ docker compose exec -it app sh`
     - `$ go run main.go`
-
-7. indexのページを確認
-    - [リンク](http://localhost:8080)
