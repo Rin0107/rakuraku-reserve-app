@@ -118,3 +118,24 @@ func generateSessionID() (string, error) {
 	sessionID := base64.URLEncoding.EncodeToString(randomBytes)
 	return sessionID, nil
 }
+
+func Logout(c *gin.Context) {
+	// CookieからセッションIDを取得し、サーバーサイドでセッションを削除
+	cookie, err := c.Cookie("session_id")
+	fmt.Print(cookie)
+	if err == nil {
+		sessionMutex.Lock()
+		delete(sessions, cookie)
+		sessionMutex.Unlock()
+	}
+
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:   "session_id",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1, // Cookieを削除
+	})
+
+	message := ResponseMessage{Message: "適切にログアウトされました"}
+	c.JSON(200,message)
+}
