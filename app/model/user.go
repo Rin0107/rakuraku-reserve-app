@@ -57,11 +57,11 @@ func IsEmail(email string) (users []User){
 }
 
 // emailからユーザー情報を取得するためのメソッド
-func GetUserPasswordByEmail(email string) (password string){
+func GetUserPasswordByEmail(email string) (password string,role string){
 	user:=User{}
-	result:=Db.Select("Password").Where("email=?",email).Find(&user)
+	result:=Db.Select("Password","Role").Where("email=?",email).Find(&user)
 	if result.Error != nil {
 		panic(result.Error)
 	}
-	return user.Password
+	return user.Password,user.Role
 }
