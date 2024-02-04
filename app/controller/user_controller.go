@@ -2,8 +2,11 @@ package controller
 
 import (
 	"app/service"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"net/http"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -19,6 +22,13 @@ type LoginInformation struct {
 type ResponseMessage struct {
 	Message string `json:"message"`
 }
+
+var (
+	// セッション情報を保存するためのマップ
+	sessions = make(map[string]bool)
+	// セッション情報へのアクセスを同期するためのミューテックス
+	sessionMutex = &sync.Mutex{}
+)
 
 // ユーザー一覧を取得するためのメソッド
 // ユーザーが存在する場合はユーザー情報をリストにして200で返す
@@ -67,9 +77,44 @@ func Login(c *gin.Context){
 			errorMessage := ResponseMessage{Message: err.Error()}
 			c.JSON(403,errorMessage)
 		}else{
+			// 認可情報としてセッションIDを作成する
+			sessionID,err:=generateSessionID()
+			if err != nil {
+				errorMessage := ResponseMessage{Message: err.Error()}
+				c.JSON(500,errorMessage)
+			}
+
+			// セッションIDを保存する
+			sessionMutex.Lock()
+			sessions[sessionID] = true
+			sessionMutex.Unlock()
+
+			// Cookieをセットする
+			cookie := &http.Cookie{
+				Name: "session_id",
+				Value: sessionID,
+				Path: "/",
+				MaxAge: 3600,
+			}
+			http.SetCookie(c.Writer, cookie)
+
 			// 認証処理が成功の場合200を返す
 			message := ResponseMessage{Message: "ログインに成功しました"}
 			c.JSON(200, message)
 		}
 	}
+}
+
+// ランダムにセッションIDを作成するためのメソッド
+func generateSessionID() (string, error) {
+   	// 16バイトのランダムなバイト列を生成
+	randomBytes := make([]byte, 16)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+
+	// base64エンコードしてセッションIDとして使用
+	sessionID := base64.URLEncoding.EncodeToString(randomBytes)
+	return sessionID, nil
 }
