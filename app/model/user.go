@@ -32,13 +32,13 @@ func GetUsers()(users []User){
 }
 
 // ユーザーを登録するためのメソッド
-// パスワードをデフォルトでpasswordに設定（仕様にて変更あり）
-func CreateUsers(name,email,role string)(){
+//　初期パスワードはハッシュ化したpasswordとする
+func CreateUsers(name,email,role string,password string)(){
 	user:=User{}
 	user.Name=name
 	user.Email=email
 	user.Role=role
-	user.Password="password"
+	user.Password=password
 	
 	result:=Db.Select("Name","Email","Role","Password").Create(&user)
 	if result.Error != nil {
