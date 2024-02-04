@@ -25,7 +25,7 @@ type ResponseMessage struct {
 
 var (
 	// セッション情報を保存するためのマップ
-	sessions = make(map[string]bool)
+	sessions = make(map[string]string)
 	// セッション情報へのアクセスを同期するためのミューテックス
 	sessionMutex = &sync.Mutex{}
 )
@@ -71,7 +71,7 @@ func Login(c *gin.Context){
 		c.IndentedJSON(400, errorMessage)
 	}else{
 		//ログイン処理を呼び出す
-		err:=service.Login(loginInformation.Email,loginInformation.Password)
+		role,err:=service.Login(loginInformation.Email,loginInformation.Password)
 		if err != nil {
 			// 存在しないemailまたは適切なpasswordが入力されていない場合403を返す
 			errorMessage := ResponseMessage{Message: err.Error()}
@@ -86,7 +86,7 @@ func Login(c *gin.Context){
 
 			// セッションIDを保存する
 			sessionMutex.Lock()
-			sessions[sessionID] = true
+			sessions[sessionID] = role
 			sessionMutex.Unlock()
 
 			// Cookieをセットする
