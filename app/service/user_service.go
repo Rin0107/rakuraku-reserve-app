@@ -2,6 +2,7 @@ package service
 
 import (
 	"app/model"
+	"errors"
 	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
@@ -26,6 +27,21 @@ func CreateUsers(name,email,role string){
 	model.CreateUsers(name,email,role,encryptPw)
 }
 
+// ログイン処理のためのメソッド
+func Login(email string,password string)(error error){
+	//　入力されたログイン情報から認証処理を実施する
+	// emailからユーザー情報（password）を取得する
+	userPassword :=model.GetUserPasswordByEmail(email)
+	if userPassword == "" {
+		return errors.New("存在しないメールアドレスです")
+	}
+	err := CompareHashAndPassword(userPassword, password)
+	if err != nil {
+		return errors.New("パスワードが一致しませんでした")
+	}
+	return
+}
+
 //メール重複を確認するためのメソッド
 func IsEmail(email string) bool{
 	user := model.IsEmail(email)
@@ -36,4 +52,9 @@ func IsEmail(email string) bool{
 func PasswordEncrypt(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(hash), err
+}
+
+// 暗号(Hash)と入力された平パスワードの比較
+func CompareHashAndPassword(hash, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }
