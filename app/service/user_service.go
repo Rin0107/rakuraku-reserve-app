@@ -4,6 +4,7 @@ import (
 	"app/model"
 	"errors"
 	"fmt"
+	"net/smtp"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -57,4 +58,36 @@ func PasswordEncrypt(password string) (string, error) {
 // 暗号(Hash)と入力された平パスワードの比較
 func CompareHashAndPassword(hash, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+}
+
+//　パスワードをリセットするためのメールを送信するためのメソッド
+// メール送信が失敗した場合、エラーを返す
+func SendEmailToChangePassword(email string) error{
+	//メール送信処理
+	// 送信元メールアドレス
+	from := "kazuo.ikeda0716@gmail.com"
+	// 送信先メールアドレス
+	to := email
+	// SMTPサーバーのアドレスとポート（Gmailの場合）
+	smtpHost := "smtp.gmail.com"
+	smtpPort := 587
+	// 送信元メールアドレスのユーザー名とパスワード（Gmailの場合はアプリパスワードを推奨）
+	smtpUsername := "kazuo.ikeda0716@gmail.com"
+	smtpPassword := "mekabu1411"
+
+	// メールの構築
+	message := []byte("To: " + to + "\r\n" +
+		"Subject: Test Subject\r\n" +
+		"\r\n" +
+		"This is the email body.\r\n")
+
+	// SMTPサーバーに接続
+	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpHost)
+	err := smtp.SendMail(fmt.Sprintf("%s:%d", smtpHost, smtpPort), auth, from, []string{to}, message)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Mail sent successfully.")
+	return nil
 }
