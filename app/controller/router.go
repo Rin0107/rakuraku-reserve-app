@@ -33,8 +33,8 @@ func CheckAuth(c *gin.Context){
 	// admin権限を持っている場合/api/adminを含むパスを認可する
 	// 権限がなかった場合403を返し、処理が中断される
 	sessionMutex.Lock()
-	role := sessions[sessionId]
-	if strings.HasPrefix(c.Request.URL.Path, "/api/admin") && role != "admin" {
+	userInformation := sessions[sessionId]
+	if strings.HasPrefix(c.Request.URL.Path, "/api/admin") && userInformation.Role != "admin" {
 		c.JSON(403,"権限が不足しています")
 		c.Abort()
 		sessionMutex.Unlock()

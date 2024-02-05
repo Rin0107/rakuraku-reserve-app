@@ -23,9 +23,15 @@ type ResponseMessage struct {
 	Message string `json:"message"`
 }
 
+// セッション情報に格納するユーザー情報
+type SessionUserInformation struct {
+	UserId int
+	Role string
+}
+
 var (
 	// セッション情報を保存するためのマップ
-	sessions = make(map[string]string)
+	sessions = make(map[string]SessionUserInformation)
 	// セッション情報へのアクセスを同期するためのミューテックス
 	sessionMutex = &sync.Mutex{}
 )
@@ -71,7 +77,7 @@ func Login(c *gin.Context){
 		c.IndentedJSON(400, errorMessage)
 	}else{
 		//ログイン処理を呼び出す
-		role,err:=service.Login(loginInformation.Email,loginInformation.Password)
+		userId,role,err:=service.Login(loginInformation.Email,loginInformation.Password)
 		if err != nil {
 			// 存在しないemailまたは適切なpasswordが入力されていない場合403を返す
 			errorMessage := ResponseMessage{Message: err.Error()}
@@ -86,7 +92,8 @@ func Login(c *gin.Context){
 
 			// セッションIDを保存する
 			sessionMutex.Lock()
-			sessions[sessionID] = role
+			sessionUserInformation:=SessionUserInformation{UserId: userId,Role: role}
+			sessions[sessionID] = sessionUserInformation
 			sessionMutex.Unlock()
 
 			// Cookieをセットする
@@ -122,7 +129,6 @@ func generateSessionID() (string, error) {
 func Logout(c *gin.Context) {
 	// CookieからセッションIDを取得し、サーバーサイドでセッションを削除
 	cookie, err := c.Cookie("session_id")
-	fmt.Print(cookie)
 	if err == nil {
 		sessionMutex.Lock()
 		delete(sessions, cookie)
