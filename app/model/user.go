@@ -1,8 +1,10 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -32,13 +34,18 @@ func GetUsers()(users []User){
 }
 
 // ユーザーを登録するためのメソッド
-// パスワードをデフォルトでpasswordに設定（仕様にて変更あり）
-func CreateUsers(name,email,role string)(){
+//　初期パスワードはハッシュ化したpasswordとする
+func CreateUsers(name,email,role string,password string)(){
+	encryptPw,err:=PasswordEncrypt(password)
+	if err != nil {
+		fmt.Println("パスワード暗号化中にエラーが発生しました。：", err)
+		return
+	}
 	user:=User{}
 	user.Name=name
 	user.Email=email
 	user.Role=role
-	user.Password="password"
+	user.Password=encryptPw
 	
 	result:=Db.Select("Name","Email","Role","Password").Create(&user)
 	if result.Error != nil {
@@ -54,4 +61,20 @@ func IsEmail(email string) (users []User){
 		panic(result.Error)
 	}
 	return
+}
+
+// emailからユーザー情報を取得するためのメソッド
+func GetUserPasswordByEmail(email string) (password string,userId int,role string){
+	user:=User{}
+	result:=Db.Select("Password","UserId","Role").Where("email=?",email).Find(&user)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return user.Password,user.UserId,user.Role
+}
+
+// 暗号(Hash)化するためのメソッド
+func PasswordEncrypt(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hash), err
 }

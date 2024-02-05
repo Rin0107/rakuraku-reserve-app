@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS equipment_reservations(
 
 -- usersテーブルにデータを挿入
 INSERT INTO users (name, email, password, user_icon, role) VALUES
-('John Doe', 'john@example.com', 'hashed_password', 'user_icon.jpg', 'admin'),
-('Jane Doe', 'jane@example.com', 'hashed_password', 'user_icon.jpg', 'user');
+('John Doe', 'john@example.com', '$2a$10$.Y2NV3z9RaupeC3F7ljvZOcXgkKQpN8dC8nj0VXnM9Nx6T9yOx502', 'user_icon.jpg', 'admin'),
+('Jane Doe', 'jane@example.com', '$2a$10$.Y2NV3z9RaupeC3F7ljvZOcXgkKQpN8dC8nj0VXnM9Nx6T9yOx502', 'user_icon.jpg', 'user');
 -- usersテーブルのデータを確認
 SELECT * FROM users;
 
