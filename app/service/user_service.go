@@ -144,6 +144,6 @@ func generateRandomToken(length int) (string, error) {
 	}
 
 	// base64エンコードしてトークンとして使用
-	token := base64.URLEncoding.EncodeToString(randomBytes)
+	token := base64.RawURLEncoding.EncodeToString(randomBytes)
 	return token, nil
 }
