@@ -56,7 +56,7 @@ func IsEmail(email string) (users []User){
 	return
 }
 
-// emailからユーザー情報を取得するためのメソッド
+// emailからユーザー情報を取得するためのメソッドt
 func GetUserPasswordByEmail(email string) (password string,role string){
 	user:=User{}
 	result:=Db.Select("Password","Role").Where("email=?",email).Find(&user)
@@ -67,5 +67,8 @@ func GetUserPasswordByEmail(email string) (password string,role string){
 }
 
 func SaveTokenToUser(email string,token string){
-	
+	result:=Db.Table("users").Where("email = ?", email).Update("password_reset_token", token)
+	if result.Error != nil {
+		panic(result.Error)
+	}
 }
