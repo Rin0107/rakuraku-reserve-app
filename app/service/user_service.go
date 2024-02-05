@@ -3,6 +3,7 @@ package service
 import (
 	"app/model"
 	"errors"
+	"fmt"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -28,10 +29,12 @@ func Login(email string,password string)(userId int,role string,error error){
 	// emailからユーザー情報（password）を取得する
 	userPassword,userId,role :=model.GetUserPasswordByEmail(email)
 	if userPassword == "" {
+		fmt.Println("認証時にエラーが発生しました: ",userPassword)
 		return 0,"",errors.New("存在しないメールアドレスです")
 	}
 	err := CompareHashAndPassword(userPassword, password)
 	if err != nil {
+		fmt.Println("認証時にエラーが発生しました: ",err)
 		return 0,"",errors.New("パスワードが一致しませんでした")
 	}
 	return userId,role,nil
