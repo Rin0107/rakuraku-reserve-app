@@ -24,29 +24,27 @@ func GetUsers() []model.User{
 
 //ユーザー登録するためのメソッド
 func CreateUsers(name,email,role string){
-	//初期パスワードをハッシュ化したpasswordとして生成
+	// 初期パスワードをハッシュ化したpasswordとして生成
+	// パスワードのハッシュ化はmodelに実装している
 	password:="password"
-	encryptPw,err:=PasswordEncrypt(password)
-	if err != nil {
-		fmt.Println("パスワード暗号化中にエラーが発生しました。：", err)
-		return
-	}
-	model.CreateUsers(name,email,role,encryptPw)
+	model.CreateUsers(name,email,role,password)
 }
 
 // ログイン処理のためのメソッド
-func Login(email string,password string)(role string,error error){
+func Login(email string,password string)(userId int,role string,error error){
 	//　入力されたログイン情報から認証処理を実施する
 	// emailからユーザー情報（password）を取得する
-	userPassword,role :=model.GetUserPasswordByEmail(email)
+	userPassword,userId,role :=model.GetUserPasswordByEmail(email)
 	if userPassword == "" {
-		return "",errors.New("存在しないメールアドレスです")
+		fmt.Println("認証時にエラーが発生しました: ",userPassword)
+		return 0,"",errors.New("存在しないメールアドレスです")
 	}
 	err := CompareHashAndPassword(userPassword, password)
 	if err != nil {
-		return "",errors.New("パスワードが一致しませんでした")
+		fmt.Println("認証時にエラーが発生しました: ",err)
+		return 0,"",errors.New("パスワードが一致しませんでした")
 	}
-	return role,nil
+	return userId,role,nil
 }
 
 //メール重複を確認するためのメソッド
@@ -55,11 +53,6 @@ func IsEmail(email string) bool{
 	return len(user) == 0
 }
 
-// 暗号(Hash)化するためのメソッド
-func PasswordEncrypt(password string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(hash), err
-}
 
 // 暗号(Hash)と入力された平パスワードの比較
 func CompareHashAndPassword(hash, password string) error {
