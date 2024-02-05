@@ -2,9 +2,14 @@ package service
 
 import (
 	"app/model"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net/smtp"
+	"os"
+
+	"github.com/joho/godotenv"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -63,23 +68,54 @@ func CompareHashAndPassword(hash, password string) error {
 //　パスワードをリセットするためのメールを送信するためのメソッド
 // メール送信が失敗した場合、エラーを返す
 func SendEmailToChangePassword(email string) error{
+	
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		fmt.Printf("読み込み出来ませんでした: %v", envErr)
+	} 
 	//メール送信処理
 	// 送信元メールアドレス
-	from := "kazuo.ikeda0716@gmail.com"
+	from := os.Getenv("MAIL_ADDRESS")
 	// 送信先メールアドレス
 	to := email
+	// メールタイトル
+	subject:="【楽々予約】パスワードの再設定について"
 	// SMTPサーバーのアドレスとポート（Gmailの場合）
 	smtpHost := "smtp.gmail.com"
 	smtpPort := 587
 	// 送信元メールアドレスのユーザー名とパスワード（Gmailの場合はアプリパスワードを推奨）
-	smtpUsername := "kazuo.ikeda0716@gmail.com"
-	smtpPassword := "mekabu1411"
+	smtpUsername := os.Getenv("MAIL_ADDRESS")
+	smtpPassword := os.Getenv("GMAIL_PASSWORD")
+
+	// メール内容詳細
+	// トークン作成処理
+	// 作成後、ユーザーテーブルに挿入
+	token, tokenErr := generateRandomToken(10)
+	if tokenErr != nil {
+		fmt.Println("Error generating token:", tokenErr)
+		return tokenErr
+	}
+	model.SaveTokenToUser(email,token)
 
 	// メールの構築
 	message := []byte("To: " + to + "\r\n" +
-		"Subject: Test Subject\r\n" +
+		"Subject: "+subject+"\r\n\r\n" +
 		"\r\n" +
-		"This is the email body.\r\n")
+		email+"宛にパスワードの再設定がリクエストされました。\r\n"+
+		"以下のトークンを使用して再設定が可能です。\n" + 
+		token + "\n\n"+
+		"このメールに心当たりが無い場合は無視してください。\n"+
+		"上記トークンを通して再設定しない限り、パスワードは変更されません。"+"\n\n\n"+
+  		//フッター
+		"------------------------------------------\r\n" + 
+		"株式会社ラクスパートナーズ\r\n" + 
+		"楽々予約システム\r\n" + 
+		"〒160-0022\r\n" + 
+		"東京都新宿区新宿4-3-25 TOKYU REIT新宿ビル8F\r\n" + 
+		"TEL：03-6675-3638"+ 
+		"FAX： 0120-82-5349\r\n" + 
+		"E-MAIL: "+os.Getenv("MAIL_ADDRESS")+"\r\n" + 
+		"------------------------------------------")
 
 	// SMTPサーバーに接続
 	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpHost)
@@ -90,4 +126,19 @@ func SendEmailToChangePassword(email string) error{
 
 	fmt.Println("Mail sent successfully.")
 	return nil
+}
+
+func generateRandomToken(length int) (string, error) {
+	// 生成するランダムなバイト列の長さ
+	randomBytes := make([]byte, length)
+
+	// crypto/rand パッケージを使用してランダムなバイト列を生成
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+
+	// base64エンコードしてトークンとして使用
+	token := base64.URLEncoding.EncodeToString(randomBytes)
+	return token, nil
 }

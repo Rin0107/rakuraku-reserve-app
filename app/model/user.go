@@ -65,3 +65,7 @@ func GetUserPasswordByEmail(email string) (password string,role string){
 	}
 	return user.Password,user.Role
 }
+
+func SaveTokenToUser(email string,token string){
+	
+}
