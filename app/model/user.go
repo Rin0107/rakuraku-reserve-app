@@ -67,7 +67,7 @@ func GetUserPasswordByEmail(email string) (password string,role string){
 }
 
 func SaveTokenToUser(email string,token string){
-	result:=Db.Table("users").Where("email = ?", email).Update("password_reset_token", token)
+	result:=Db.Table("users").Where("email = ?", email).Updates(User{PasswordResetToken: token,UpdatedAt: time.Now()})
 	if result.Error != nil {
 		panic(result.Error)
 	}

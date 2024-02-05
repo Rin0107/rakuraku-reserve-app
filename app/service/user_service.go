@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"mime"
 	"net/smtp"
 	"os"
 
@@ -80,6 +81,7 @@ func SendEmailToChangePassword(email string) error{
 	to := email
 	// メールタイトル
 	subject:="【楽々予約】パスワードの再設定について"
+	subject = mime.QEncoding.Encode("utf-8", subject)
 	// SMTPサーバーのアドレスとポート（Gmailの場合）
 	smtpHost := "smtp.gmail.com"
 	smtpPort := 587
@@ -107,15 +109,16 @@ func SendEmailToChangePassword(email string) error{
 		"このメールに心当たりが無い場合は無視してください。\n"+
 		"上記トークンを通して再設定しない限り、パスワードは変更されません。"+"\n\n\n"+
   		//フッター
-		"------------------------------------------\r\n" + 
+		"------------------------------------------------------\r\n" + 
 		"株式会社ラクスパートナーズ\r\n" + 
 		"楽々予約システム\r\n" + 
 		"〒160-0022\r\n" + 
-		"東京都新宿区新宿4-3-25 TOKYU REIT新宿ビル8F\r\n" + 
-		"TEL：03-6675-3638"+ 
+		"東京都新宿区新宿4-3-25\r\n"+
+		"TOKYU REIT新宿ビル8F\r\n" + 
+		"TEL：03-6675-3638\r\n"+ 
 		"FAX： 0120-82-5349\r\n" + 
 		"E-MAIL: "+os.Getenv("MAIL_ADDRESS")+"\r\n" + 
-		"------------------------------------------")
+		"------------------------------------------------------")
 
 	// SMTPサーバーに接続
 	auth := smtp.PlainAuth("", smtpUsername, smtpPassword, smtpHost)
