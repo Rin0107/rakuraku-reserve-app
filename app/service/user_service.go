@@ -128,6 +128,8 @@ func SendEmailToChangePassword(email string) error{
 	return nil
 }
 
+// ランダムなトークンを作成する処理
+// 文字数を引数にとり、適切なトークンを作成する
 func generateRandomToken(length int) (string, error) {
 	// 生成するランダムなバイト列の長さ
 	randomBytes := make([]byte, length)
