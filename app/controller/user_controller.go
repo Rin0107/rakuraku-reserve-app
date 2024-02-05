@@ -80,7 +80,7 @@ func Login(c *gin.Context){
 		userId,role,err:=service.Login(loginInformation.Email,loginInformation.Password)
 		if err != nil {
 			// 存在しないemailまたは適切なpasswordが入力されていない場合403を返す
-			errorMessage := ResponseMessage{Message: err.Error()}
+			errorMessage := ResponseMessage{Message: "ユーザ ID 又はパスワードが不正です"}
 			c.JSON(403,errorMessage)
 		}else{
 			// 認可情報としてセッションIDを作成する
