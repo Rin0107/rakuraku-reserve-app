@@ -185,7 +185,7 @@ func SendEmailToChangePassword(c *gin.Context){
 		if err != nil {
 			var errorMessage Error
 			errorMessage.Message="メール送信に失敗しました"
-			c.JSON(500,err)
+			c.JSON(500,errorMessage)
 		}else{
 			// メールアドレスが問題ない場合、メール送信処理を呼び出す
 			c.IndentedJSON(200, userInformationForResetPassword)
