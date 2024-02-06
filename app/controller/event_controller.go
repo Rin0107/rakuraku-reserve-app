@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HTTP リクエストデータ定義
+// HTTP JSONリクエストデータ定義
 type NewEventInfo struct {
 	Title            string `json:"title"`
 	Body             string `json:"body"`
