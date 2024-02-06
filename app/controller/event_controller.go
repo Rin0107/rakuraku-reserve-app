@@ -2,7 +2,6 @@ package controller
 
 import (
 	"app/service"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -29,7 +28,6 @@ func InsertEvent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Print(newEventInfo)
 	err := service.InsertEvent(newEventInfo.Title, newEventInfo.Body, newEventInfo.EventDate, newEventInfo.JoinDeadlineDate, newEventInfo.Capacity)
 	if err == nil {
 		c.IndentedJSON(200, gin.H{"message": "Event inserted successfully"})
