@@ -72,8 +72,47 @@ func GetUserPasswordByEmail(email string) (password string,userId int,role strin
 	}
 	return user.Password,user.UserId,user.Role
 }
+
+// トークンをDBに保存するためのメソッド
 func SaveTokenToUser(email string,token string){
 	result:=Db.Table("users").Where("email = ?", email).Updates(User{PasswordResetToken: token,UpdatedAt: time.Now()})
+	if result.Error != nil {
+		panic(result.Error)
+	}
+}
+
+// パスワードトークンを使ってユーザーIDを取得するためのメソッド
+func GetUserIdForPasswordToken(passwordToken string) (int,error){
+	user:=User{}
+	result := Db.Select("UserId").Where("password_reset_token=?",passwordToken).Find(&user)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	if user.UserId == 0 {
+		return 0,fmt.Errorf("該当のユーザーが存在しません")
+	}
+	return user.UserId,result.Error
+}
+
+// パスワードをリセットするメソッド
+func ResetPassword(userId int, password string){
+	// パスワードをハッシュ化する
+	encryptPw,err:=PasswordEncrypt(password)
+	if err != nil {
+		fmt.Println("パスワード暗号化中にエラーが発生しました。：", err)
+		return
+	}
+	// パスワードをリセットする
+	// update_atカラムを更新する
+	result:=Db.Table("users").Where("user_id = ?", userId).Updates(User{Password: encryptPw,UpdatedAt: time.Now()})
+	if result.Error != nil {
+		panic(result.Error)
+	}
+}
+
+// パスワードリセットトークンを削除するメソッド
+func DeleteResetPasswordToken(userId int){
+	result:=Db.Table("users").Where("user_id = ?", userId).Update("password_reset_token",nil)
 	if result.Error != nil {
 		panic(result.Error)
 	}
