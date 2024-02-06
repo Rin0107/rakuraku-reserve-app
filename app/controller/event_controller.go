@@ -2,9 +2,20 @@ package controller
 
 import (
 	"app/service"
+	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+// HTTP リクエストデータ定義
+type NewEventInfo struct {
+	Title            string `json:"title"`
+	Body             string `json:"body"`
+	EventDate        string `json:"eventDate"`
+	JoinDeadlineDate string `json:"joinDeadlineDate"`
+	Capacity         string `json:"capacity"`
+}
 
 /*
 新規イベントをデータベースに挿入するメソッド
@@ -13,7 +24,13 @@ import (
 イベントの挿入がエラーとなった場合は、ステータスコード404とエラーメッセージをJSONで返す。
 */
 func InsertEvent(c *gin.Context) {
-	err := service.InsertEvent(c)
+	var newEventInfo NewEventInfo
+	if err := c.ShouldBindJSON(&newEventInfo); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Print(newEventInfo)
+	err := service.InsertEvent(newEventInfo.Title, newEventInfo.Body, newEventInfo.EventDate, newEventInfo.JoinDeadlineDate, newEventInfo.Capacity)
 	if err == nil {
 		c.IndentedJSON(200, gin.H{"message": "Event inserted successfully"})
 		return

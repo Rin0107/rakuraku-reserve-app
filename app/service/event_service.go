@@ -4,8 +4,6 @@ import (
 	"app/model"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 /*
@@ -14,13 +12,7 @@ import (
 正常に取得できない場合はエラーを返す。
 取得したデータを使用して新しいEventモデルを作成し、モデルのInsertEventメソッドを呼び出す。
 */
-func InsertEvent(c *gin.Context) error {
-	// HTTP POSTリクエストからデータを取得
-	title := c.PostForm("title")
-	body := c.PostForm("body")
-	eventDateStr := c.PostForm("eventDate")
-	joinDeadlineDateStr := c.PostForm("joinDeadlineDate")
-	capacityStr := c.PostForm("capacity")
+func InsertEvent(title string, body string, eventDateStr string, joinDeadlineDateStr string, capacityStr string) error {
 
 	// イベント日時をstringからtime.Time型に変換
 	eventDate, err := time.Parse(time.RFC3339, eventDateStr)
