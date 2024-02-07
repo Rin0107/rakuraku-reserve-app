@@ -94,28 +94,26 @@ func GetUserIdForPasswordToken(passwordToken string) (int,error){
 	return user.UserId,result.Error
 }
 
-// パスワードをリセットするメソッド
-func ResetPassword(userId int, password string){
+/* パスワードをリセットするメソッド
+	パスワードをリセットする
+	update_atカラムを更新する
+	パスワードリセットトークンを削除する */
+func ResetPassword(userId int, password string) error{
 	// パスワードをハッシュ化する
 	encryptPw,err:=PasswordEncrypt(password)
 	if err != nil {
 		fmt.Println("パスワード暗号化中にエラーが発生しました。：", err)
-		return
+		return err
 	}
-	// パスワードをリセットする
-	// update_atカラムを更新する
-	result:=Db.Table("users").Where("user_id = ?", userId).Updates(User{Password: encryptPw,UpdatedAt: time.Now()})
+	result:=Db.Table("users").Where("user_id = ?", userId).Updates(map[string]any{
+		"password": encryptPw,
+		"updated_at": time.Now(),
+		"password_reset_token": nil,
+	})
 	if result.Error != nil {
-		panic(result.Error)
+		return result.Error
 	}
-}
-
-// パスワードリセットトークンを削除するメソッド
-func DeleteResetPasswordToken(userId int){
-	result:=Db.Table("users").Where("user_id = ?", userId).Update("password_reset_token",nil)
-	if result.Error != nil {
-		panic(result.Error)
-	}
+	return nil
 }
 
 // 暗号(Hash)化するためのメソッド
