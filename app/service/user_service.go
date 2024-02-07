@@ -151,10 +151,8 @@ func ResetPassword(passwordToken string,password string) error{
 	}
 
 	// ユーザーIDを使ってパスワードを変更する
+	// トークン情報も理論削除している
 	model.ResetPassword(userId,password)
-
-	// ユーザーIDを使ってトークン情報を削除する
-	model.DeleteResetPasswordToken(userId)
 
 	return nil
 }
