@@ -249,8 +249,8 @@ func GetUserDetail(c *gin.Context){
 		sessionId, err := c.Cookie("session_id")
 		if err != nil {
 			fmt.Println(err)
-			errorMessage := ResponseMessage{Message: "権限がありません"}
-			c.JSON(403,errorMessage)
+			errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
+			c.JSON(500,errorMessage)
 			return
 		}
 		// ログインユーザーのユーザーIDを取得
