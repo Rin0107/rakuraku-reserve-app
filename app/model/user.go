@@ -33,6 +33,15 @@ func GetUsers()(users []User){
 	return
 }
 
+func GetUserDetailByUserId(userId int)(User,error){
+	user:=User{}
+	result:=Db.Select("user_id","name","email","user_icon","role","created_at","updated_at").Where("user_id=?",userId).Find(&user)
+	if result.Error!=nil||user.UserId==0 {
+		return user,fmt.Errorf("該当のユーザーが存在しません")
+	}
+	return user,nil
+}
+
 // ユーザーを登録するためのメソッド
 //　初期パスワードはハッシュ化したpasswordとする
 func CreateUsers(name,email,role string,password string)(){

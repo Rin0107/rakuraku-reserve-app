@@ -22,6 +22,16 @@ func GetUsers() []model.User{
 	return users
 }
 
+// ユーザー詳細情報を取得するためのメソッド
+// userIdを使用してユーザー情報を返す
+func GetUserDetail(userId int) (model.User,error){
+	user,err:=model.GetUserDetailByUserId(userId)
+	if err != nil {
+		return user, err
+	}
+	return user,nil
+}
+
 //ユーザー登録するためのメソッド
 func CreateUsers(name,email,role string){
 	// 初期パスワードをハッシュ化したpasswordとして生成
