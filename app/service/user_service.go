@@ -136,6 +136,10 @@ func SendEmailToChangePassword(email string) error{
 
 // ユーザーを理論削除するためのメソッド
 func DeleteUser(userId int) error{
+	err :=model.DeleteUser(userId)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -105,6 +105,22 @@ func GetUserIdForPasswordToken(passwordToken string) (int,error){
 	return user.UserId,result.Error
 }
 
+// ユーザー情報を理論削除するためのメソッド
+func DeleteUser(userId int)error{
+	// ユーザーが存在するか確認
+	user,err:=GetUserDetailByUserId(userId)
+	if err != nil||user.UserId==0 {
+		return fmt.Errorf("該当のユーザーが存在しません")
+	}
+	// ユーザーを理論削除
+	result:=Db.Table("users").Where("user_id = ?", userId).Update("deleted_at",time.Now())
+	fmt.Println(result)
+	if result.Error!=nil {
+		return result.Error
+	}
+	return nil
+}
+
 /* パスワードをリセットするメソッド
 	パスワードをリセットする
 	update_atカラムを更新する
