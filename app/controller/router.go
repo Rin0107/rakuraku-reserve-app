@@ -18,6 +18,7 @@ func GetRouter() *gin.Engine{
 	r.POST("api/users/reset-password",ResetPassword)
 	r.GET("api/user",CheckAuth,GetUserDetail)
 	r.GET("api/admin/user/:userId",CheckAuth,GetUserDetail)
+	r.DELETE("api/admin/user/delete/:userId",CheckAuth,DeleteUser)
 	return r
 }
 

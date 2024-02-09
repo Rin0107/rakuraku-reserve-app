@@ -263,10 +263,25 @@ func GetUserDetail(c *gin.Context){
 	if err != nil {
 		fmt.Println(err)
 		errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
-			c.JSON(500,errorMessage)
-			return
+		c.JSON(500,errorMessage)
+		return
 	}
 	c.JSON(200,userDetail)
+}
+
+// ユーザーを理論削除するためのメソッド
+func DeleteUser(c *gin.Context){
+	// URLからuserIdを取得する
+	userId,_ := strconv.Atoi(c.Param("userId"))
+	err:=service.DeleteUser(userId)
+	if err != nil {
+		fmt.Println(err)
+		errorMessage := ResponseMessage{Message: "ユーザー削除に失敗しました"}
+		c.JSON(500,errorMessage)
+		return
+	}
+	message := ResponseMessage{Message: "ユーザーが削除されました"}
+	c.JSON(200,message)
 }
 
 //存在するメールアドレスがあるか確認するカスタムバリデーション実装
