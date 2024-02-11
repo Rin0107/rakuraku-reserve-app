@@ -6,7 +6,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//機材一覧を取得するAPI（is_availableがtrue）
+//機材IDに紐づく予約情報を取得する。
+func GetEquipmentReservationsByEquipmentId(c *gin.Context){
+	strEquipmentId :=c.Param("equipmentId");
+	//pathから受け取ったstring型をint型に変換
+	equipmentId, e := strconv.Atoi(strEquipmentId);
+	equipmentReservations := service.GetEquipmentReservationsByUserId(equipmentId)
+	var message string
+	if e != nil {
+		message = "正しい数値を入力してください。"
+	}
+	switch len(equipmentReservations){
+	case 0:
+		c.IndentedJSON(404, gin.H{
+			"status":404,
+			"message": message,
+			"equipmentReservations":equipmentReservations,
+		})
+	default:
+		c.IndentedJSON(200, gin.H{
+			"status":202,
+			"message": message,
+			"equipmentReservations":equipmentReservations,
+		})
+	}
+}
+//ユーザーIDに紐づく予約情報を取得する。
 func GetEquipmentReservationsByUserId(c *gin.Context){
 	strUserId :=c.Param("userId");
 	//pathから受け取ったstring型をint型に変換

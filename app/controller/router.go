@@ -12,6 +12,7 @@ func GetRouter() *gin.Engine {
 	r.GET("/api/equipments/", GetEquipments)
 	r.GET("/api/equipments/:equipmentId", GetEquipmentById)
 	r.GET("/api/equipments/reserve/:userId", GetEquipmentReservationsByUserId)
+	r.GET("/api/equipments/:equipmentId/reserve", GetEquipmentReservationsByEquipmentId)
 	r.POST("/api/login",Login)
 	r.POST("/api/logout",Logout)
 	r.POST("api/users/forgot-password",SendEmailToChangePassword)
