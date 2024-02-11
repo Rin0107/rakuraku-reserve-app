@@ -3,14 +3,13 @@ package service
 import(
 	"app/model"
 )
-/*機材一覧を取得する（is_availbleがtrue）*/
+/*特定のユーザーの機材予約一覧を取得する*/
 func GetEquipmentReservationsByUserId(userId int) []model.EquipmentReservation{
 	equipmentReservations := model.GetEquipmentReservationsByUserId(userId)
 	return equipmentReservations
 }
-
-// /*機材をIDから1つだけ取得する。*/
-// func GetEquipmentById(equipmentId int) model.Equipment{
-// 	equipment := model.GetEquipmentById(equipmentId)
-// 	return equipment;
-// }
+/*特定の機材の機材予約一覧を取得する*/
+func GetEquipmentReservationsByEquipmentId(equipmentId int) []model.EquipmentReservation{
+	equipmentReservations := model.GetEquipmentReservationsByUserId(equipmentId)
+	return equipmentReservations
+}
