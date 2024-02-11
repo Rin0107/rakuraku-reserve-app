@@ -7,12 +7,12 @@ import (
 
 type Equipment struct {
 	// gorm.Model `json:"-"`
-	EquipmentId int `json:"equipmentId,opitempty"`
-	Name string `json:"name,opitempty"`
-	Explanation string `json:"explanation,opitempty"`
-	EquipmentCategoryId int `json:"equipmentCategoryId,opitempty"`
-	EquipmentImg string `json:"equipmentImg,opitempty"`
-	IsAvailable bool `json:"isAvaliable,opitempty"`
+	EquipmentId int `json:"equipmentId,omitempty"`
+	Name string `json:"name,omitempty"`
+	Explanation string `json:"explanation,omitempty"`
+	EquipmentCategoryId int `json:"equipmentCategoryId,omitempty"`
+	EquipmentImg string `json:"equipmentImg,omitempty"`
+	IsAvailable bool `json:"IsAvaliable,omitempty"`
 }
 
 func GetEquipments()(equipments []Equipment){
