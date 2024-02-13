@@ -19,6 +19,7 @@ func GetRouter() *gin.Engine{
 	r.GET("api/user",CheckAuth,GetUserDetail)
 	r.GET("api/admin/user/:userId",CheckAuth,GetUserDetail)
 	r.DELETE("api/admin/user/delete/:userId",CheckAuth,DeleteUser)
+	r.PATCH("api/user/:userId",CheckAuth,UpdateUserInformation)
 	return r
 }
 

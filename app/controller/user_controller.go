@@ -31,6 +31,7 @@ type UserInformationForResetPassword struct{
 // セッション情報に格納するユーザー情報
 type SessionUserInformation struct {
 	UserId int
+	Email string
 	Role string
 }
 
@@ -41,6 +42,13 @@ type PasswordResetInformation struct{
 	ConfirmationPassword string `json:"confirmation_password" validate:"required"`
 }
 
+// 変更用のユーザー情報
+type UserInformationToUpdate struct{
+	Name  string `json:"name" validate:"required,gte=0,lte=100"`
+	Email string `json:"email" validate:"email"`
+	UserIcon string `json:"user_icon"`
+	Role  string `json:"role" validate:"oneof=admin user"`
+}
 var (
 	// セッション情報を保存するためのマップ
 	sessions = make(map[string]SessionUserInformation)
@@ -104,7 +112,7 @@ func Login(c *gin.Context){
 
 			// セッションIDを保存する
 			sessionMutex.Lock()
-			sessionUserInformation:=SessionUserInformation{UserId: userId,Role: role}
+			sessionUserInformation:=SessionUserInformation{UserId: userId,Email: loginInformation.Email,Role: role}
 			sessions[sessionID] = sessionUserInformation
 			sessionMutex.Unlock()
 
@@ -247,7 +255,7 @@ func GetUserDetail(c *gin.Context){
 	//　パラメータがない場合（/api/user）の場合、自身のユーザー詳細を返す
 	if userId == 0 {
 		// sessionIdからuserIdを取得する
-		userId=GetUserIdBySessionId(c)
+		userId=GetUserInformationBySessionId(c).UserId
 	}
 	// userIdからユーザー詳細を取得する
 	userDetail,err:=service.GetUserDetail(userId)
@@ -258,6 +266,78 @@ func GetUserDetail(c *gin.Context){
 		return
 	}
 	c.JSON(200,userDetail)
+}
+
+// ユーザー情報を変更するためのメソッド
+// 管理者権限の場合、すべてのユーザーのすべてのユーザー情報を変更できる
+// ユーザー権限の場合、自分のユーザー情報（role以外）を変更できる
+func UpdateUserInformation(c *gin.Context){
+	// URLからuserIdを取得する
+	userId,_ := strconv.Atoi(c.Param("userId"))
+	
+	// リクエストボディを取得する
+	var userInformationToUpdate UserInformationToUpdate
+	if err := c.ShouldBindJSON(&userInformationToUpdate); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 以下バリデーション実装
+	validate = validator.New()
+	validateErr := validate.Struct(userInformationToUpdate)
+	if validateErr!=nil{
+		for _, err := range validateErr.(validator.ValidationErrors) {
+			fmt.Println("Namespace =",err.Namespace())
+			fmt.Println("Tag =",err.Tag())
+			fmt.Println("Type =",err.Type())
+			fmt.Println("Value =",err.Value())
+			fmt.Println("Param =",err.Param())
+		} 
+		var errorMessage Error
+		errorMessage.Message="不正な入力値があります"
+		c.IndentedJSON(400, errorMessage)
+		return
+	}
+	
+	// session情報の権限情報がuserの場合、入力値をuserに変更する
+	if GetUserInformationBySessionId(c).Role=="user" {
+		if GetUserInformationBySessionId(c).UserId!=userId {
+			var errorMessage Error
+			errorMessage.Message="不正な入力値があります"
+			c.IndentedJSON(400, errorMessage)
+			return
+		}
+		// ユーザー権限の場合、権限を変更できないようにする
+		userInformationToUpdate.Role="user"
+	} 
+
+	// 自分のメール以外が指定されたとき、重複したメールがあるか確認する
+	userDetail,getUserDetailErr:=service.GetUserDetail(userId)
+	if getUserDetailErr != nil {
+		fmt.Println(getUserDetailErr)
+		errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
+		c.JSON(500,errorMessage)
+		return
+	}
+	if GetUserInformationBySessionId(c).Email!=userDetail.Email {
+		if !service.IsEmail(userInformationToUpdate.Email) {
+			var errorMessage Error
+			errorMessage.Message="ユーザー情報の変更に失敗しました"
+			c.IndentedJSON(400, errorMessage)
+			return
+		}
+	}
+	
+	// userIdを指定してユーザー情報を変更する
+	err := service.UpdateUserInformation(userId,userInformationToUpdate.Name,userInformationToUpdate.Email,userInformationToUpdate.UserIcon,userInformationToUpdate.Role)
+	if err != nil {
+		var errorMessage Error
+		errorMessage.Message="ユーザー情報の変更に失敗しました"
+		c.JSON(500,errorMessage)
+		return
+	}
+	message := ResponseMessage{Message: "ユーザー情報が変更されました"}
+	c.IndentedJSON(200, message)
 }
 
 //存在するメールアドレスがあるか確認するカスタムバリデーション実装
@@ -283,19 +363,19 @@ func passwordConfirmationValidation(fl validator.FieldLevel) bool {
     return password == confirmPassword
 }
 
-// セッション情報からuserIdを取得するための汎用的メソッド
-func GetUserIdBySessionId(c *gin.Context) int{
+// セッション情報からユーザー情報を取得するための汎用的メソッド
+func GetUserInformationBySessionId(c *gin.Context) SessionUserInformation{
 	sessionId, err := c.Cookie("session_id")
 		if err != nil {
 			fmt.Println(err)
 			errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
 			c.JSON(500,errorMessage)
-			return 0
+			return SessionUserInformation{}
 		}
 		// ログインユーザーのユーザーIDを取得
 		sessionMutex.Lock()
-		userId := sessions[sessionId].UserId
+		sessionUserInformation := sessions[sessionId]
 		sessionMutex.Unlock()
 
-		return userId
+		return sessionUserInformation
 }

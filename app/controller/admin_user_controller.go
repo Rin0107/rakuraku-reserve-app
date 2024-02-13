@@ -64,7 +64,7 @@ func DeleteUser(c *gin.Context){
 	// URLからuserIdを取得する
 	userId,_ := strconv.Atoi(c.Param("userId"))
 	// 自分のIdとuserIdが異なることを確認する
-	if userId==GetUserIdBySessionId(c) {
+	if userId==GetUserInformationBySessionId(c).UserId {
 		fmt.Println("自身のユーザー情報は削除できません")
 		errorMessage := ResponseMessage{Message: "ユーザー削除に失敗しました"}
 		c.JSON(500,errorMessage)
