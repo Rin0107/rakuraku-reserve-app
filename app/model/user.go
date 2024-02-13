@@ -143,6 +143,22 @@ func ResetPassword(userId int, password string) error{
 	return nil
 }
 
+// ユーザー情報を変更するためのメソッド
+func UpdateUserInformation(userId int,name,email,userIcon,role string) error{
+	// ユーザーが存在するか確認
+	user,err:=GetUserDetailByUserId(userId)
+	if err != nil||user.UserId==0 {
+		return fmt.Errorf("該当のユーザーが存在しません")
+	}
+
+	// ユーザー情報を変更する処理
+	result:=Db.Table("users").Where("user_id = ?", userId).Updates(User{Name: name,Email: email,UserIcon: userIcon,Role: role,UpdatedAt: time.Now()})
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return nil
+}
+
 // 暗号(Hash)化するためのメソッド
 func PasswordEncrypt(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
