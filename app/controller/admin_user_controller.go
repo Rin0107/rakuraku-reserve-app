@@ -67,7 +67,7 @@ func DeleteUser(c *gin.Context){
 	if userId==GetUserIdBySessionId(c) {
 		fmt.Println("自身のユーザー情報は削除できません")
 		errorMessage := ResponseMessage{Message: "ユーザー削除に失敗しました"}
-		c.JSON(404,errorMessage)
+		c.JSON(403,errorMessage)
 		return
 	}
 	err:=service.DeleteUser(userId)
