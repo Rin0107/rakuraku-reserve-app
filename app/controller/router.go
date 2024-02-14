@@ -10,13 +10,14 @@ func GetRouter() *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("view/*html")
 	r.GET("/api/equipments/", GetEquipments)
-	r.POST("/api/login",Login)
-	r.POST("/api/logout",Logout)
-	r.POST("api/users/forgot-password",SendEmailToChangePassword)
-	r.POST("api/users/reset-password",ResetPassword)
+	r.POST("/api/login", Login)
+	r.POST("/api/logout", Logout)
+	r.POST("api/users/forgot-password", SendEmailToChangePassword)
+	r.POST("api/users/reset-password", ResetPassword)
 	r.POST("/api/events", InsertEvent)
 	r.GET("/api/admin/users", CheckAuth, GetUsers)
 	r.POST("/api/admin/users/create", CreateUsers)
+	r.DELETE("/api/equipments/:equipmentId/reserve/:reserveId", DeleteEquipmentReservation)
 	return r
 }
 
