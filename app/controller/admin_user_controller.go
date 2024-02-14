@@ -4,6 +4,7 @@ import (
 	"app/service"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
@@ -56,6 +57,32 @@ func CreateUsers(c *gin.Context) {
 		service.CreateUsers(user.Name,user.Email,user.Role)
 		c.IndentedJSON(201, user)
 	}
+}
+
+// ユーザーを理論削除するためのメソッド
+func DeleteUser(c *gin.Context){
+	// URLからuserIdを取得する
+	userId,_ := strconv.Atoi(c.Param("userId"))
+	// 自分のIdとuserIdが異なることを確認する
+	if userId==GetUserIdBySessionId(c) {
+		fmt.Println("自身のユーザー情報は削除できません")
+		errorMessage := ResponseMessage{Message: "ユーザー削除に失敗しました"}
+		c.JSON(403,errorMessage)
+		return
+	}
+	err:=service.DeleteUser(userId)
+	if err != nil {
+		fmt.Println(err)
+		errorMessage := ResponseMessage{Message: "ユーザー削除に失敗しました"}
+		if err.Error() == "該当のユーザーが存在しません" {
+            c.JSON(403,errorMessage)
+		return
+        }
+		c.JSON(500,errorMessage)
+		return
+	}
+	message := ResponseMessage{Message: "ユーザーが削除されました"}
+	c.JSON(200,message)
 }
 
 //メール重複に関するカスタムバリデーション実装
