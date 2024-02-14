@@ -90,6 +90,15 @@ func SendEmailToChangePassword(email string) error{
 	return nil
 }
 
+// ユーザーを理論削除するためのメソッド
+func DeleteUser(userId int) error{
+	err :=model.DeleteUser(userId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // ランダムなトークンを作成する処理
 // 文字数を引数にとり、適切なトークンを作成する
 func generateRandomToken(length int) (string, error) {
