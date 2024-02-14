@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -237,6 +238,35 @@ func ResetPassword(c *gin.Context){
 			c.IndentedJSON(200, message)
 		}
 	}
+}
+
+// ユーザー詳細を取得するためのメソッド
+func GetUserDetail(c *gin.Context){
+	// URLからuserIdを取得する
+	userId,_ := strconv.Atoi(c.Param("userId"))
+	//　パラメータがない場合（/api/user）の場合、自身のユーザー詳細を返す
+	if userId == 0 {
+		sessionId, err := c.Cookie("session_id")
+		if err != nil {
+			fmt.Println(err)
+			errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
+			c.JSON(500,errorMessage)
+			return
+		}
+		// ログインユーザーのユーザーIDを取得
+		sessionMutex.Lock()
+		userId = sessions[sessionId].UserId
+		sessionMutex.Unlock()
+	}
+	// userIdからユーザー詳細を取得する
+	userDetail,err:=service.GetUserDetail(userId)
+	if err != nil {
+		fmt.Println(err)
+		errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
+			c.JSON(500,errorMessage)
+			return
+	}
+	c.JSON(200,userDetail)
 }
 
 //存在するメールアドレスがあるか確認するカスタムバリデーション実装
