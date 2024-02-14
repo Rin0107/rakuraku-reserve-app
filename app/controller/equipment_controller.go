@@ -3,7 +3,6 @@ package controller
 import (
 	"app/model"
 	"app/service"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,7 @@ func GetEquipments(c *gin.Context) {
 
 /*
 新規機材予約をデータベースに挿入するメソッド
-リクエストコンテキストから機材予約情報を取得し、サービス層を介してデータベースに挿入を試みる。
+リクエストコンテキストからイベント情報を取得し、サービス層を介してデータベースに挿入を試みる。
 正常に挿入されたら、ステータスコード200と成功メッセージをJSONで返す。
 挿入がエラーとなった場合は、ステータスコード404とエラーメッセージをJSONで返す。
 */
@@ -35,9 +34,9 @@ func ReserveEquipment(c *gin.Context) {
 		return
 	}
 	err := service.ReserveEquipment(equipmentId, equipmentReservingRequest)
-	if err == nil {
-		c.IndentedJSON(200, gin.H{"message": "Reserved equipment successfully"})
+	if err != nil {
+		c.IndentedJSON(404, gin.H{"error": err.Error()})
 		return
 	}
-	c.IndentedJSON(404, gin.H{"error": err.Error()})
+	c.IndentedJSON(200, gin.H{"message": "Reserved equipment successfully"})
 }

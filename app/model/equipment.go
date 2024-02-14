@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -75,7 +76,8 @@ func (equipmentReservation *EquipmentReservation) InsertEquipmentReservation() e
 	}
 	result := Db.Create(equipmentReservation)
 	if result.Error != nil {
-		return result.Error
+		fmt.Print(result.Error)
+		return fmt.Errorf("failed to insert equipment reservation.")
 	}
 	return nil
 }
