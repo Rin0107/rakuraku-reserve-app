@@ -35,7 +35,6 @@ func ReserveEquipment(c *gin.Context) {
 		return
 	}
 	err := service.ReserveEquipment(equipmentId, equipmentReservingRequest)
-	fmt.Print(err)
 	if err == nil {
 		c.IndentedJSON(200, gin.H{"message": "Reserved equipment successfully"})
 		return
