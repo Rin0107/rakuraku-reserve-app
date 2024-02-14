@@ -96,3 +96,19 @@ func generateRandomToken(length int) (string, error) {
 	token := base64.RawURLEncoding.EncodeToString(randomBytes)
 	return token, nil
 }
+
+// パスワードを再設定するためのメソッド
+func ResetPassword(passwordToken string,password string) error{
+	// トークンを持ったユーザーのユーザーIDを取得する
+	userId,err:=model.GetUserIdForPasswordToken(passwordToken)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	// ユーザーIDを使ってパスワードを変更する
+	// トークン情報も理論削除している
+	model.ResetPassword(userId,password)
+
+	return nil
+}

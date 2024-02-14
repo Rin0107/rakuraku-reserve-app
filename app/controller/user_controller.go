@@ -23,7 +23,7 @@ type ResponseMessage struct {
 	Message string `json:"message"`
 }
 
-// パスワードリセット時のユーザー情報
+// パスワードリセットメール送信用のユーザー情報
 type UserInformationForResetPassword struct{
 	Email string `json:"email" validate:"email,existing_email_validation"`
 }
@@ -31,6 +31,13 @@ type UserInformationForResetPassword struct{
 type SessionUserInformation struct {
 	UserId int
 	Role string
+}
+
+// パスワードリセット処理のユーザー情報
+type PasswordResetInformation struct{
+	PasswordToken string `json:"password_token" validate:"required"`
+	Password string `json:"password" validate:"password_confirmation_validation"`
+	ConfirmationPassword string `json:"confirmation_password" validate:"required"`
 }
 
 var (
@@ -193,8 +200,64 @@ func SendEmailToChangePassword(c *gin.Context){
 	}
 }
 
+// パスワード再設定のためのメソッド
+// メールに添付されているトークンが必要
+// パスワードと確認用パスワードが同値である必要がある
+func ResetPassword(c *gin.Context){
+	var passwordResetInformation PasswordResetInformation
+	if err := c.ShouldBindJSON(&passwordResetInformation); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 以下バリデーション実装
+	validate = validator.New()
+	validate.RegisterValidation("password_confirmation_validation",passwordConfirmationValidation)
+	validateErr := validate.Struct(passwordResetInformation)
+	if validateErr!=nil{
+		for _, err := range validateErr.(validator.ValidationErrors) {
+			fmt.Println("Namespace =",err.Namespace())
+			fmt.Println("Tag =",err.Tag())
+			fmt.Println("Type =",err.Type())
+			fmt.Println("Value =",err.Value())
+			fmt.Println("Param =",err.Param())
+		} 
+		var errorMessage Error
+		errorMessage.Message="不正な入力値があります"
+		c.IndentedJSON(400, errorMessage)
+	}else{
+		err:=service.ResetPassword(passwordResetInformation.PasswordToken,passwordResetInformation.Password)
+		if err != nil {
+			var errorMessage Error
+			errorMessage.Message="パスワード再設定が失敗しました"
+			c.JSON(500,errorMessage)
+		}else{
+			// パスワードが再設定されたらログイン状態にする
+			message := ResponseMessage{Message: "パスワードが再設定されました"}
+			c.IndentedJSON(200, message)
+		}
+	}
+}
+
 //存在するメールアドレスがあるか確認するカスタムバリデーション実装
 func existingEmailValidation(fl validator.FieldLevel) bool{
 	email := fl.Field().String()
 	return !service.IsEmail(email)
+}
+
+// パスワードと確認用パスワードが一致するか確認するカスタムバリデーション
+func passwordConfirmationValidation(fl validator.FieldLevel) bool {
+    // パスワードと確認用パスワードを取得
+    password := fl.Field().String()
+	confirmPasswordField := fl.Parent().FieldByName("ConfirmationPassword")
+
+    // 確認用パスワードが存在しない場合は一致しないとみなす
+    if !confirmPasswordField.IsValid() {
+        return false
+    }
+
+    confirmPassword := confirmPasswordField.String()
+
+    // パスワードと確認用パスワードが一致するか確認
+    return password == confirmPassword
 }
