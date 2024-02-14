@@ -37,7 +37,7 @@ func GetUsers()(users []User){
 // userIdが0の時該当ユーザーが存在しないと判断する
 func GetUserDetailByUserId(userId int)(User,error){
 	user:=User{}
-	result:=Db.Select("user_id","name","email","user_icon","role","created_at","updated_at").Where("user_id=?",userId).Find(&user)
+	result:=Db.Select("user_id","name","email","user_icon","created_at","updated_at").Where("user_id=?",userId).Find(&user)
 	if result.Error!=nil||user.UserId==0 {
 		return user,fmt.Errorf("該当のユーザーが存在しません")
 	}
