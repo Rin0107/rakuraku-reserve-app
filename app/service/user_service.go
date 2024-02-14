@@ -2,6 +2,8 @@ package service
 
 import (
 	"app/model"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 
@@ -50,4 +52,47 @@ func IsEmail(email string) bool{
 // 暗号(Hash)と入力された平パスワードの比較
 func CompareHashAndPassword(hash, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+}
+
+//　パスワードをリセットするためのメールを送信するためのメソッド
+// メール送信が失敗した場合、エラーを返す
+func SendEmailToChangePassword(email string) error{
+	// トークン作成処理
+	// 作成後、ユーザーテーブルに挿入
+	token, tokenErr := generateRandomToken(10)
+	if tokenErr != nil {
+		fmt.Println("Error generating token:", tokenErr)
+		return tokenErr
+	}
+	model.SaveTokenToUser(email,token)
+
+	// 件名、本文の設定
+	subject:="【楽々予約】パスワードの再設定について"
+	text:=email+"宛にパスワードの再設定がリクエストされました。\r\n"+
+		"以下のトークンを使用して再設定が可能です。\n" + 
+		token + "\n\n"+
+		"このメールに心当たりが無い場合は無視してください。\n"+
+		"上記トークンを通して再設定しない限り、パスワードは変更されません。"
+	err :=SendMail(MailInformation{Email: email,Subject: subject,Text: text})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ランダムなトークンを作成する処理
+// 文字数を引数にとり、適切なトークンを作成する
+func generateRandomToken(length int) (string, error) {
+	// 生成するランダムなバイト列の長さ
+	randomBytes := make([]byte, length)
+
+	// crypto/rand パッケージを使用してランダムなバイト列を生成
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		return "", err
+	}
+
+	// base64エンコードしてトークンとして使用
+	token := base64.RawURLEncoding.EncodeToString(randomBytes)
+	return token, nil
 }

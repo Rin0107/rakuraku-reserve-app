@@ -72,6 +72,12 @@ func GetUserPasswordByEmail(email string) (password string,userId int,role strin
 	}
 	return user.Password,user.UserId,user.Role
 }
+func SaveTokenToUser(email string,token string){
+	result:=Db.Table("users").Where("email = ?", email).Updates(User{PasswordResetToken: token,UpdatedAt: time.Now()})
+	if result.Error != nil {
+		panic(result.Error)
+	}
+}
 
 // 暗号(Hash)化するためのメソッド
 func PasswordEncrypt(password string) (string, error) {
