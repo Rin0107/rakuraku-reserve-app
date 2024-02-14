@@ -23,6 +23,10 @@ type ResponseMessage struct {
 	Message string `json:"message"`
 }
 
+// パスワードリセット時のユーザー情報
+type UserInformationForResetPassword struct{
+	Email string `json:"email" validate:"email,existing_email_validation"`
+}
 // セッション情報に格納するユーザー情報
 type SessionUserInformation struct {
 	UserId int
@@ -126,6 +130,8 @@ func generateSessionID() (string, error) {
 	return sessionID, nil
 }
 
+// ログアウトするためのメソッド
+// サーバー、クライアント側それぞれのセッションID情報を削除する
 func Logout(c *gin.Context) {
 	// CookieからセッションIDを取得し、サーバーサイドでセッションを削除
 	cookie, err := c.Cookie("session_id")
@@ -144,4 +150,51 @@ func Logout(c *gin.Context) {
 
 	message := ResponseMessage{Message: "適切にログアウトされました"}
 	c.JSON(200,message)
+}
+
+// パスワードを変更するためにメールを送信するためのメソッド
+// メールアドレスがリクエストボディに必要
+// 本メソッドでemail形式、存在するemailか確認する
+// 成功時はメール送信後、200で返す
+// メール送信失敗時、500で返す
+// バリデーション時、400で返す
+func SendEmailToChangePassword(c *gin.Context){
+	var userInformationForResetPassword UserInformationForResetPassword
+	if err := c.ShouldBindJSON(&userInformationForResetPassword); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 以下バリデーション実装
+	validate = validator.New()
+	validate.RegisterValidation("existing_email_validation",existingEmailValidation)
+	validateErr := validate.Struct(userInformationForResetPassword)
+	if validateErr!=nil{
+		for _, err := range validateErr.(validator.ValidationErrors) {
+			fmt.Println("Namespace =",err.Namespace())
+			fmt.Println("Tag =",err.Tag())
+			fmt.Println("Type =",err.Type())
+			fmt.Println("Value =",err.Value())
+			fmt.Println("Param =",err.Param())
+		} 
+		var errorMessage Error
+		errorMessage.Message="不正なメールアドレスです"
+		c.IndentedJSON(400, errorMessage)
+	}else{
+		err:=service.SendEmailToChangePassword(userInformationForResetPassword.Email)
+		if err != nil {
+			var errorMessage Error
+			errorMessage.Message="メール送信に失敗しました"
+			c.JSON(500,errorMessage)
+		}else{
+			// メールアドレスが問題ない場合、メール送信処理を呼び出す
+			c.IndentedJSON(200, userInformationForResetPassword)
+		}
+	}
+}
+
+//存在するメールアドレスがあるか確認するカスタムバリデーション実装
+func existingEmailValidation(fl validator.FieldLevel) bool{
+	email := fl.Field().String()
+	return !service.IsEmail(email)
 }
