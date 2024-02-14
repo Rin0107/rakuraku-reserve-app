@@ -14,6 +14,8 @@ func GetRouter() *gin.Engine {
 	r.POST("/api/logout",Logout)
 	r.POST("api/users/forgot-password",SendEmailToChangePassword)
 	r.POST("api/users/reset-password",ResetPassword)
+	r.GET("api/user",CheckAuth,GetUserDetail)
+	r.GET("api/admin/user/:userId",CheckAuth,GetUserDetail)
 	r.POST("/api/events", InsertEvent)
 	r.GET("/api/admin/users", CheckAuth, GetUsers)
 	r.POST("/api/admin/users/create", CreateUsers)
