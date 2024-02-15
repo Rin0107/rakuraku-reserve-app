@@ -302,8 +302,9 @@ func UpdateUserInformation(c *gin.Context){
 	if GetUserInformationBySessionId(c).Role=="user" {
 		if GetUserInformationBySessionId(c).UserId!=userId {
 			var errorMessage Error
-			errorMessage.Message="不正な入力値があります"
-			c.IndentedJSON(400, errorMessage)
+			errorMessage.Message="ユーザー情報取得に失敗しました"
+			fmt.Println("user権限で自身以外のuserIdが指定されました")
+			c.IndentedJSON(403, errorMessage)
 			return
 		}
 	} 
@@ -313,7 +314,7 @@ func UpdateUserInformation(c *gin.Context){
 	if getUserDetailErr != nil {
 		fmt.Println(getUserDetailErr)
 		errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
-		c.JSON(500,errorMessage)
+		c.JSON(403,errorMessage)
 		return
 	}
 	if GetUserInformationBySessionId(c).Email!=userDetail.Email {
@@ -329,6 +330,12 @@ func UpdateUserInformation(c *gin.Context){
 	err := service.UpdateUserInformation(userId,userInformationToUpdate.Name,userInformationToUpdate.Email,userInformationToUpdate.UserIcon)
 	if err != nil {
 		var errorMessage Error
+		errorMessage.Message="ユーザー情報の変更に失敗しました"
+		// DBに存在しないuserIdが指定されていたとき403を返す
+		if err.Error() == "該当のユーザーが存在しません" {
+		c.JSON(403,errorMessage)
+		}
+		//その他エラーの場合500を返す
 		errorMessage.Message="ユーザー情報の変更に失敗しました"
 		c.JSON(500,errorMessage)
 		return
