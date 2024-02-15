@@ -20,22 +20,13 @@ type Equipment struct {
 }
 
 type EquipmentReservation struct {
-	EquipmentReservationId uint      `gorm:"primaryKey;autoIncrement"`
-	UserId                 int       `validate:"required"`
-	EquipmentId            int       `validate:"required"`
-	ReservationStartTime   time.Time `validate:"required"`
-	ReservationEndTime     time.Time `validate:"required"`
-	ActivityStartTime      time.Time `validate:"required"`
-	ActivityEndTime        time.Time `validate:"required"`
-}
-
-// HTTP JSONリクエストデータ定義
-type EquipmentReservingRequest struct {
-	UserId               int    `json:"userId"`
-	ReservationStartTime string `json:"reservationStartTime"`
-	ReservationEndTime   string `json:"reservationEndTime"`
-	ActivityStartTime    string `json:"activityStartTime"`
-	ActivityEndTime      string `json:"activityEndTime"`
+	EquipmentReservationId uint `gorm:"primaryKey;autoIncrement"`
+	UserId                 int
+	EquipmentId            int
+	ReservationStartTime   time.Time
+	ReservationEndTime     time.Time
+	ActivityStartTime      time.Time
+	ActivityEndTime        time.Time
 }
 
 // func GetAll() (equiments []Equiment) {

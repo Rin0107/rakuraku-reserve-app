@@ -2,6 +2,7 @@ package service
 
 import (
 	"app/model"
+	"app/request"
 	"strconv"
 	"time"
 )
@@ -17,7 +18,7 @@ func GetEquipments() []model.Equipment {
 equipmentReservationモデルにリクエストから受け取ったデータを渡し、
 モデルのInsertEquipmentReservationメソッドを呼び出す。
 */
-func ReserveEquipment(equipmentIdStr string, reservingRequest model.EquipmentReservingRequest) error {
+func ReserveEquipment(equipmentIdStr string, reservingRequest request.EquipmentReservingRequest) error {
 	// equipmentId(string)をintに変換
 	equipmentId, err := strconv.Atoi(equipmentIdStr)
 	if err != nil {
