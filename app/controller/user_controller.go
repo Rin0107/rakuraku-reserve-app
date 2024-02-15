@@ -47,7 +47,6 @@ type UserInformationToUpdate struct{
 	Name  string `json:"name" validate:"required,gte=0,lte=100"`
 	Email string `json:"email" validate:"email"`
 	UserIcon string `json:"user_icon"`
-	Role  string `json:"role" validate:"oneof=admin user"`
 }
 var (
 	// セッション情報を保存するためのマップ
@@ -299,7 +298,7 @@ func UpdateUserInformation(c *gin.Context){
 		return
 	}
 	
-	// session情報の権限情報がuserの場合、入力値をuserに変更する
+	// session情報の権限情報がuserの場合、自分のユーザー情報のみを変更できる
 	if GetUserInformationBySessionId(c).Role=="user" {
 		if GetUserInformationBySessionId(c).UserId!=userId {
 			var errorMessage Error
@@ -307,8 +306,6 @@ func UpdateUserInformation(c *gin.Context){
 			c.IndentedJSON(400, errorMessage)
 			return
 		}
-		// ユーザー権限の場合、権限を変更できないようにする
-		userInformationToUpdate.Role="user"
 	} 
 
 	// 自分のメール以外が指定されたとき、重複したメールがあるか確認する
@@ -329,7 +326,7 @@ func UpdateUserInformation(c *gin.Context){
 	}
 	
 	// userIdを指定してユーザー情報を変更する
-	err := service.UpdateUserInformation(userId,userInformationToUpdate.Name,userInformationToUpdate.Email,userInformationToUpdate.UserIcon,userInformationToUpdate.Role)
+	err := service.UpdateUserInformation(userId,userInformationToUpdate.Name,userInformationToUpdate.Email,userInformationToUpdate.UserIcon)
 	if err != nil {
 		var errorMessage Error
 		errorMessage.Message="ユーザー情報の変更に失敗しました"

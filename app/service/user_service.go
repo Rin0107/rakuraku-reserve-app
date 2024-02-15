@@ -145,8 +145,8 @@ func DeleteUser(userId int) error{
 
 // ユーザー情報を変更するためのメソッド
 // ユーザー情報はバリデーションされていることが必要
-func UpdateUserInformation(userId int,name,email,userIcon,role string) error{
-	err := model.UpdateUserInformation(userId,name,email,userIcon,role)
+func UpdateUserInformation(userId int,name,email,userIcon string) error{
+	err := model.UpdateUserInformation(userId,name,email,userIcon)
 	if err != nil {
 		return err
 	}
