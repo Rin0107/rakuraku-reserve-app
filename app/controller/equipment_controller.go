@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type EquipmentServiceImplementation struct{}
@@ -27,13 +28,22 @@ func GetEquipments(c *gin.Context) {
 挿入がエラーとなった場合は、ステータスコード404とエラーメッセージをJSONで返す。
 */
 func ReserveEquipment(c *gin.Context) {
+	validate := validator.New()
 	equipmentId := c.Param("equipmentId")
 	var equipmentReservingRequest request.EquipmentReservingRequest
+
 	if err := c.ShouldBindJSON(&equipmentReservingRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := service.ReserveEquipment(equipmentId, equipmentReservingRequest)
+
+	err := validate.Struct(equipmentReservingRequest)
+	if err != nil {
+		c.IndentedJSON(404, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = service.ReserveEquipment(equipmentId, equipmentReservingRequest)
 	if err != nil {
 		c.IndentedJSON(404, gin.H{"error": err.Error()})
 		return
