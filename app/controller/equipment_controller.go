@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"app/model"
+	"app/request"
 	"app/service"
 	"net/http"
 
@@ -28,7 +28,7 @@ func GetEquipments(c *gin.Context) {
 */
 func ReserveEquipment(c *gin.Context) {
 	equipmentId := c.Param("equipmentId")
-	var equipmentReservingRequest model.EquipmentReservingRequest
+	var equipmentReservingRequest request.EquipmentReservingRequest
 	if err := c.ShouldBindJSON(&equipmentReservingRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
