@@ -17,6 +17,16 @@ func GetUsers() []model.User{
 	return users
 }
 
+// ユーザー詳細情報を取得するためのメソッド
+// userIdを使用してユーザー情報を返す
+func GetUserDetail(userId int) (model.User,error){
+	user,err:=model.GetUserDetailByUserId(userId)
+	if err != nil {
+		return user, err
+	}
+	return user,nil
+}
+
 //ユーザー登録するためのメソッド
 func CreateUsers(name,email,role string){
 	// 初期パスワードをハッシュ化したpasswordとして生成
@@ -74,6 +84,15 @@ func SendEmailToChangePassword(email string) error{
 		"このメールに心当たりが無い場合は無視してください。\n"+
 		"上記トークンを通して再設定しない限り、パスワードは変更されません。"
 	err :=SendMail(MailInformation{Email: email,Subject: subject,Text: text})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ユーザーを理論削除するためのメソッド
+func DeleteUser(userId int) error{
+	err :=model.DeleteUser(userId)
 	if err != nil {
 		return err
 	}

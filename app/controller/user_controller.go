@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -239,6 +240,26 @@ func ResetPassword(c *gin.Context){
 	}
 }
 
+// ユーザー詳細を取得するためのメソッド
+func GetUserDetail(c *gin.Context){
+	// URLからuserIdを取得する
+	userId,_ := strconv.Atoi(c.Param("userId"))
+	//　パラメータがない場合（/api/user）の場合、自身のユーザー詳細を返す
+	if userId == 0 {
+		// sessionIdからuserIdを取得する
+		userId=GetUserIdBySessionId(c)
+	}
+	// userIdからユーザー詳細を取得する
+	userDetail,err:=service.GetUserDetail(userId)
+	if err != nil {
+		fmt.Println(err)
+		errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
+		c.JSON(500,errorMessage)
+		return
+	}
+	c.JSON(200,userDetail)
+}
+
 //存在するメールアドレスがあるか確認するカスタムバリデーション実装
 func existingEmailValidation(fl validator.FieldLevel) bool{
 	email := fl.Field().String()
@@ -260,4 +281,21 @@ func passwordConfirmationValidation(fl validator.FieldLevel) bool {
 
     // パスワードと確認用パスワードが一致するか確認
     return password == confirmPassword
+}
+
+// セッション情報からuserIdを取得するための汎用的メソッド
+func GetUserIdBySessionId(c *gin.Context) int{
+	sessionId, err := c.Cookie("session_id")
+		if err != nil {
+			fmt.Println(err)
+			errorMessage := ResponseMessage{Message: "ユーザー情報取得に失敗しました"}
+			c.JSON(500,errorMessage)
+			return 0
+		}
+		// ログインユーザーのユーザーIDを取得
+		sessionMutex.Lock()
+		userId := sessions[sessionId].UserId
+		sessionMutex.Unlock()
+
+		return userId
 }
