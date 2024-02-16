@@ -33,6 +33,17 @@ func GetUsers()(users []User){
 	return
 }
 
+// ユーザー詳細を取得するためのメソッド
+// userIdが0の時該当ユーザーが存在しないと判断する
+func GetUserDetailByUserId(userId int)(User,error){
+	user:=User{}
+	result:=Db.Select("user_id","name","email","user_icon","created_at","updated_at").Where("user_id=?",userId).Find(&user)
+	if result.Error!=nil||user.UserId==0 {
+		return user,fmt.Errorf("該当のユーザーが存在しません")
+	}
+	return user,nil
+}
+
 // ユーザーを登録するためのメソッド
 //　初期パスワードはハッシュ化したpasswordとする
 func CreateUsers(name,email,role string,password string)(){
@@ -94,6 +105,22 @@ func GetUserIdForPasswordToken(passwordToken string) (int,error){
 	return user.UserId,result.Error
 }
 
+// ユーザー情報を理論削除するためのメソッド
+func DeleteUser(userId int)error{
+	// ユーザーが存在するか確認
+	user,err:=GetUserDetailByUserId(userId)
+	if err != nil||user.UserId==0 {
+		return fmt.Errorf("該当のユーザーが存在しません")
+	}
+	// ユーザーを理論削除
+	result:=Db.Table("users").Where("user_id = ?", userId).Update("deleted_at",time.Now())
+	fmt.Println(result)
+	if result.Error!=nil {
+		return result.Error
+	}
+	return nil
+}
+
 /* パスワードをリセットするメソッド
 	パスワードをリセットする
 	update_atカラムを更新する
@@ -112,6 +139,22 @@ func ResetPassword(userId int, password string) error{
 	})
 	if result.Error != nil {
 		return result.Error
+	}
+	return nil
+}
+
+// ユーザー情報を変更するためのメソッド
+func UpdateUserInformation(userId int,name,email,userIcon string) error{
+	// ユーザーが存在するか確認
+	user,err:=GetUserDetailByUserId(userId)
+	if err != nil||user.UserId==0 {
+		return fmt.Errorf("該当のユーザーが存在しません")
+	}
+
+	// ユーザー情報を変更する処理
+	result:=Db.Table("users").Where("user_id = ?", userId).Updates(User{Name: name,Email: email,UserIcon: userIcon,UpdatedAt: time.Now()})
+	if result.Error != nil {
+		panic(result.Error)
 	}
 	return nil
 }
