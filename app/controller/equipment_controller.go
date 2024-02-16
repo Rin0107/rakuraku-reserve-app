@@ -28,7 +28,6 @@ func GetEquipments(c *gin.Context) {
 挿入がエラーとなった場合は、ステータスコード404とエラーメッセージをJSONで返す。
 */
 func ReserveEquipment(c *gin.Context) {
-	validate := validator.New()
 	equipmentId := c.Param("equipmentId")
 	var equipmentReservingRequest request.EquipmentReservingRequest
 
@@ -37,6 +36,7 @@ func ReserveEquipment(c *gin.Context) {
 		return
 	}
 
+	validate := validator.New()
 	err := validate.Struct(equipmentReservingRequest)
 	if err != nil {
 		c.IndentedJSON(404, gin.H{"error": err.Error()})
