@@ -99,6 +99,16 @@ func DeleteUser(userId int) error{
 	return nil
 }
 
+// ユーザー情報を変更するためのメソッド
+// ユーザー情報はバリデーションされていることが必要
+func UpdateUserInformation(userId int,name,email,userIcon string) error{
+	err := model.UpdateUserInformation(userId,name,email,userIcon)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // ランダムなトークンを作成する処理
 // 文字数を引数にとり、適切なトークンを作成する
 func generateRandomToken(length int) (string, error) {
