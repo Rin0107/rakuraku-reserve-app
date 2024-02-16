@@ -69,3 +69,9 @@ func StrToTime(dateStr string) (time.Time, error) {
 	}
 	return date, nil
 }
+
+/*機材をIDから1つだけ取得する。*/
+func GetEquipmentById(equipmentId int) model.Equipment {
+	equipment := model.GetEquipmentById(equipmentId)
+	return equipment
+}
