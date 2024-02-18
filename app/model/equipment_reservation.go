@@ -29,13 +29,13 @@ func GetEquipmentReservationsByEquipmentId(equipmentId int)(equipmentReservation
 	return
 }
 
-//特定のユーザーが予約をしている情報一覧を取得
-// func GetEquipmentReservationsByUserId(userId int)(equipmentReservations []EquipmentReservation){
-// 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
+// 特定のユーザーが予約をしている情報一覧を取得
+func GetEquipmentReservationsByUserId(userId int)(equipmentReservations []EquipmentReservation){
+	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
 	
-// 	result := Db.Table("equipment_reservations").Where("user_id = ?",userId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_start_time asc").Find(&equipmentReservations)
-// 	if result.Error != nil {
-// 		panic(result.Error)
-// 	}
-// 	return
-// }
+	result := Db.Table("equipment_reservations").Where("user_id = ?",userId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_start_time asc").Find(&equipmentReservations)
+	if result.Error != nil {
+		panic(result.Error)
+	}
+	return
+}
