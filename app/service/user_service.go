@@ -17,6 +17,16 @@ func GetUsers() []model.User{
 	return users
 }
 
+// ユーザー詳細情報を取得するためのメソッド
+// userIdを使用してユーザー情報を返す
+func GetUserDetail(userId int) (model.User,error){
+	user,err:=model.GetUserDetailByUserId(userId)
+	if err != nil {
+		return user, err
+	}
+	return user,nil
+}
+
 //ユーザー登録するためのメソッド
 func CreateUsers(name,email,role string){
 	// 初期パスワードをハッシュ化したpasswordとして生成
@@ -80,6 +90,25 @@ func SendEmailToChangePassword(email string) error{
 	return nil
 }
 
+// ユーザーを理論削除するためのメソッド
+func DeleteUser(userId int) error{
+	err :=model.DeleteUser(userId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// ユーザー情報を変更するためのメソッド
+// ユーザー情報はバリデーションされていることが必要
+func UpdateUserInformation(userId int,name,email,userIcon string) error{
+	err := model.UpdateUserInformation(userId,name,email,userIcon)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // ランダムなトークンを作成する処理
 // 文字数を引数にとり、適切なトークンを作成する
 func generateRandomToken(length int) (string, error) {
@@ -95,4 +124,20 @@ func generateRandomToken(length int) (string, error) {
 	// base64エンコードしてトークンとして使用
 	token := base64.RawURLEncoding.EncodeToString(randomBytes)
 	return token, nil
+}
+
+// パスワードを再設定するためのメソッド
+func ResetPassword(passwordToken string,password string) error{
+	// トークンを持ったユーザーのユーザーIDを取得する
+	userId,err:=model.GetUserIdForPasswordToken(passwordToken)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	// ユーザーIDを使ってパスワードを変更する
+	// トークン情報も理論削除している
+	model.ResetPassword(userId,password)
+
+	return nil
 }

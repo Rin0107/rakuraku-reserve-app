@@ -93,10 +93,10 @@ CREATE TABLE IF NOT EXISTS equipment_reservations(
     activity_start_time TIMESTAMP NOT NULL,
     activity_end_time TIMESTAMP NOT NULL,
     deleted_at TIMESTAMP,
-    report_id INTEGER NOT NULL,
+    -- report_id SERIAL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (equipment_id) REFERENCES equipments(equipment_id),
-    FOREIGN KEY (report_id) REFERENCES reports(report_id)
+    FOREIGN KEY (equipment_id) REFERENCES equipments(equipment_id)
+    -- FOREIGN KEY (report_id) REFERENCES reports(report_id)
 );
 
 -- usersテーブルにデータを挿入
