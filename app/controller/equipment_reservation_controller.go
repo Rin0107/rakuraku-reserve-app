@@ -36,7 +36,7 @@ func GetEquipmentReservationsByEquipmentId(c *gin.Context){
 		})
 	}
 }
-//ユーザーIDに紐づく予約情報を取得する。
+// ユーザーIDに紐づく予約情報を取得する。
 // func GetEquipmentReservationsByUserId(c *gin.Context){
 // 	strUserId :=c.Param("userId");
 // 	//pathから受け取ったstring型をint型に変換
@@ -44,13 +44,18 @@ func GetEquipmentReservationsByEquipmentId(c *gin.Context){
 // 	equipmentReservations := service.GetEquipmentReservationsByUserId(userId)
 // 	var message string
 // 	if e != nil {
-// 		message = "正しい数値を入力してください。"
+// 		c.IndentedJSON(404, gin.H{
+// 			"status":404,
+// 			"message": "正しい数値を入力してください",
+// 			"equipmentReservations":equipmentReservations,
+// 		})
+// 		return
 // 	}
 // 	switch len(equipmentReservations){
 // 	case 0:
 // 		c.IndentedJSON(404, gin.H{
 // 			"status":404,
-// 			"message": message,
+// 			"message": "予約が一件もございません",
 // 			"equipmentReservations":equipmentReservations,
 // 		})
 // 	default:

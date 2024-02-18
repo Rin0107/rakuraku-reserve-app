@@ -22,7 +22,7 @@ type EquipmentReservation struct {
 func GetEquipmentReservationsByEquipmentId(equipmentId int)(equipmentReservations []EquipmentReservation){
 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
 	
-	result := Db.Where("equipment_id = ?",equipmentId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("equipment_id asc").Find(&equipmentReservations);
+	result := Db.Where("equipment_id = ?",equipmentId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_strat_time asc").Find(&equipmentReservations);
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -30,12 +30,12 @@ func GetEquipmentReservationsByEquipmentId(equipmentId int)(equipmentReservation
 }
 
 //特定のユーザーが予約をしている情報一覧を取得
-func GetEquipmentReservationsByUserId(userId int)(equipmentReservations []EquipmentReservation){
-	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
+// func GetEquipmentReservationsByUserId(userId int)(equipmentReservations []EquipmentReservation){
+// 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
 	
-	result := Db.Table("equipment_reservations").Where("user_id = ?",userId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Find(&equipmentReservations)
-	if result.Error != nil {
-		panic(result.Error)
-	}
-	return
-}
+// 	result := Db.Where("user_id = ?",userId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_start_time asc").Find(&equipmentReservations)
+// 	if result.Error != nil {
+// 		panic(result.Error)
+// 	}
+// 	return
+// }
