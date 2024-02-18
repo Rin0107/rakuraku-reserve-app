@@ -7,7 +7,7 @@ import (
 )
 
 type EquipmentReservation struct {
-	EquipmentReservationId int `json:"equipmentReservationId,omitempty"`
+	EquipmentReservationId uint `gorm:"primaryKey;autoIncrement" ,json:"equipmentReservationId,omitempty"`
 	UserId int `json:"userId,omitempty"`
 	EquipmentId int `json:"equipmentId,omitempty"`
 	ReservationStartTime time.Time `json:"reservationStartTime,omitempty"`
@@ -22,7 +22,7 @@ type EquipmentReservation struct {
 func GetEquipmentReservationsByEquipmentId(equipmentId int)(equipmentReservations []EquipmentReservation){
 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
 	
-	result := Db.Where("equipment_id = ?",equipmentId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_strat_time asc").Find(&equipmentReservations);
+	result := Db.Table("equipment_reservations").Where("equipment_id = ?",equipmentId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_start_time asc").Find(&equipmentReservations);
 	if result.Error != nil {
 		panic(result.Error)
 	}
@@ -33,7 +33,7 @@ func GetEquipmentReservationsByEquipmentId(equipmentId int)(equipmentReservation
 // func GetEquipmentReservationsByUserId(userId int)(equipmentReservations []EquipmentReservation){
 // 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。
 	
-// 	result := Db.Where("user_id = ?",userId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_start_time asc").Find(&equipmentReservations)
+// 	result := Db.Table("equipment_reservations").Where("user_id = ?",userId).Where("deleted_at is null").Where("reservation_end_time > ?",time.Now()).Order("reservation_start_time asc").Find(&equipmentReservations)
 // 	if result.Error != nil {
 // 		panic(result.Error)
 // 	}

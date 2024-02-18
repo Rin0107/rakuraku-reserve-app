@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"time"
+	// "time"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -19,15 +19,15 @@ type Equipment struct {
 	IsAvailable         bool   `json:"IsAvaliable,omitempty"`
 }
 
-type EquipmentReservation struct {
-	EquipmentReservationId uint `gorm:"primaryKey;autoIncrement"`
-	UserId                 int
-	EquipmentId            int
-	ReservationStartTime   time.Time
-	ReservationEndTime     time.Time
-	ActivityStartTime      time.Time
-	ActivityEndTime        time.Time
-}
+// type EquipmentReservation struct {
+// 	EquipmentReservationId uint `gorm:"primaryKey;autoIncrement"`
+// 	UserId                 int
+// 	EquipmentId            int
+// 	ReservationStartTime   time.Time
+// 	ReservationEndTime     time.Time
+// 	ActivityStartTime      time.Time
+// 	ActivityEndTime        time.Time
+// }
 
 func GetEquipments() (equipments []Equipment) {
 	//Table名を指定しない場合に、equipment単数型のテーブル名としてみなされているので。

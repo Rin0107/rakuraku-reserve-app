@@ -96,7 +96,6 @@ CREATE TABLE IF NOT EXISTS equipment_reservations(
     -- report_id SERIAL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (equipment_id) REFERENCES equipments(equipment_id)
-    -- FOREIGN KEY (report_id) REFERENCES reports(report_id)
 );
 
 -- usersテーブルにデータを挿入
