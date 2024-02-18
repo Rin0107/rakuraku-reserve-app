@@ -11,78 +11,53 @@ func GetEquipmentReservationsByEquipmentId(c *gin.Context){
 	strEquipmentId :=c.Param("equipmentId");
 	//pathから受け取ったstring型をint型に変換
 	equipmentId, e := strconv.Atoi(strEquipmentId);
-	equipmentReservations := service.GetEquipmentReservationsByUserId(equipmentId)
+	equipmentReservations := service.GetEquipmentReservationsByEquipmentId(equipmentId)
 	var message string
 	if e != nil {
-		message = "正しい数値を入力してください。"
+		c.IndentedJSON(404, gin.H{
+			"status":404,
+			"message": "正しい数値を入力してください",
+			"equipmentReservations":equipmentReservations,
+		})
+		return
 	}
 	switch len(equipmentReservations){
 	case 0:
 		c.IndentedJSON(404, gin.H{
 			"status":404,
-			"message": message,
+			"message": "予約が一件もございません",
 			"equipmentReservations":equipmentReservations,
 		})
 	default:
 		c.IndentedJSON(200, gin.H{
-			"status":202,
+			"status":200,
 			"message": message,
 			"equipmentReservations":equipmentReservations,
 		})
 	}
 }
 //ユーザーIDに紐づく予約情報を取得する。
-func GetEquipmentReservationsByUserId(c *gin.Context){
-	strUserId :=c.Param("userId");
-	//pathから受け取ったstring型をint型に変換
-	userId, e := strconv.Atoi(strUserId);
-	equipmentReservations := service.GetEquipmentReservationsByUserId(userId)
-	var message string
-	if e != nil {
-		message = "正しい数値を入力してください。"
-	}
-	switch len(equipmentReservations){
-	case 0:
-		c.IndentedJSON(404, gin.H{
-			"status":404,
-			"message": message,
-			"equipmentReservations":equipmentReservations,
-		})
-	default:
-		c.IndentedJSON(200, gin.H{
-			"status":202,
-			"message": message,
-			"equipmentReservations":equipmentReservations,
-		})
-	}
-}
-
-//機材の詳細情報を取得(idにて取得)
-// func GetEquipmentById(c *gin.Context){
-// 	strEquipmentId :=c.Param("equipmentId");
+// func GetEquipmentReservationsByUserId(c *gin.Context){
+// 	strUserId :=c.Param("userId");
 // 	//pathから受け取ったstring型をint型に変換
-// 	equipmentId, e := strconv.Atoi(strEquipmentId);
-	
-// 	equipment := service.GetEquipmentById(equipmentId);
-	
+// 	userId, e := strconv.Atoi(strUserId);
+// 	equipmentReservations := service.GetEquipmentReservationsByUserId(userId)
 // 	var message string
 // 	if e != nil {
-// 		message = "機材IDには正しい数値を入力してください"
-// 	}else if equipment.EquipmentId == 0 {
-// 		message = "機材が存在しません"
+// 		message = "正しい数値を入力してください。"
 // 	}
-// 	switch equipment.EquipmentId{
+// 	switch len(equipmentReservations){
 // 	case 0:
 // 		c.IndentedJSON(404, gin.H{
-// 			"status":"404",
-// 			"equipment": equipment,
+// 			"status":404,
 // 			"message": message,
+// 			"equipmentReservations":equipmentReservations,
 // 		})
 // 	default:
 // 		c.IndentedJSON(200, gin.H{
-// 			"status":"200",
-// 			"equipment": equipment,
+// 			"status":200,
 // 			"message": message,
+// 			"equipmentReservations":equipmentReservations,
 // 		})
 // 	}
 // }
