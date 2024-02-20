@@ -22,11 +22,11 @@ func DeleteEquipmentReservation(c *gin.Context) {
 	reserveId := c.Param("reserveId")
 
 	err := service.DeleteEquipmentReservation(equipmentId, reserveId)
-	if err == nil {
-		c.IndentedJSON(200, gin.H{"message": "Reserved equipment successfully"})
+	if err != nil {
+		c.IndentedJSON(404, gin.H{"error": err.Error()})
 		return
 	}
-	c.IndentedJSON(404, gin.H{"error": err.Error()})
+	c.IndentedJSON(200, gin.H{"message": "Reserved equipment successfully"})
 }
 
 // 機材一覧を取得するAPI（is_availableがtrue）
