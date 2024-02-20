@@ -110,7 +110,7 @@ func ChangeEquipmentReservation(equipmentIdStr string, reserveIdStr string, rese
 
 // 日時(string)をtime.Time型に変換する関数
 func StrToTime(dateStr string) (time.Time, error) {
-	date, err := time.Parse(time.RFC3339, dateStr)
+	date, err := time.Parse("2006-01-02 15:04:05", dateStr)
 	if err != nil {
 		return time.Time{}, err
 	}
