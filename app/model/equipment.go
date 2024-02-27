@@ -78,3 +78,37 @@ func GetEquipmentById(equipmentId int) (equipment Equipment) {
 	}
 	return
 }
+
+// リクエストから受け取ったデータを使用し、機材予約を変更する
+func (newEquipmentReservation *EquipmentReservation) ChangeEquipmentReservation() error {
+	var equipmentReservationId = newEquipmentReservation.EquipmentReservationId
+	var equipmentId = newEquipmentReservation.EquipmentId
+
+	var existingReservation EquipmentReservation
+
+	// 該当の機材予約の存在チェック
+	if err := Db.Where("equipment_reservation_id = ? AND equipment_id = ? AND deleted_at IS NULL", equipmentReservationId, equipmentId).
+		First(&existingReservation).
+		Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("equipment reservation not found")
+		}
+		fmt.Print(err)
+		return fmt.Errorf("failed to find equipment reservation:")
+	}
+
+	// リクエストから受け取ったデータに更新
+	existingReservation.ReservationStartTime = newEquipmentReservation.ActivityStartTime
+	existingReservation.ReservationEndTime = newEquipmentReservation.ReservationEndTime
+	existingReservation.ActivityStartTime = newEquipmentReservation.ActivityStartTime
+	existingReservation.ActivityEndTime = newEquipmentReservation.ActivityEndTime
+
+	// 更新をデータベースに反映
+	if err := Db.Save(&existingReservation).
+		Error; err != nil {
+		fmt.Print(err)
+		return fmt.Errorf("failed to delete equipment reservation.")
+	}
+
+	return nil
+}
