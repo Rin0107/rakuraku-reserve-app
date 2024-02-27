@@ -23,6 +23,7 @@ func GetRouter() *gin.Engine {
 	r.GET("/api/admin/users", CheckAuth, GetUsers)
 	r.POST("/api/admin/users/create", CreateUsers)
 	r.POST("/api/equipments/:equipmentId/reserve", ReserveEquipment)
+	r.DELETE("/api/equipments/:equipmentId/reserve/:reserveId", DeleteEquipmentReservation)
 	return r
 }
 
