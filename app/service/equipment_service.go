@@ -61,6 +61,53 @@ func ReserveEquipment(equipmentIdStr string, reservingRequest request.EquipmentR
 	return nil
 }
 
+func ChangeEquipmentReservation(equipmentIdStr string, reserveIdStr string, reservingRequest request.EquipmentReservingRequest) error {
+	// equipmentId(string)をintに変換
+	equipmentId, err := strconv.Atoi(equipmentIdStr)
+	if err != nil {
+		return err
+	}
+	// reserveId(string)をintに変換
+	reserveId, err := strconv.Atoi(reserveIdStr)
+	if err != nil {
+		return err
+	}
+	// 各時間の変換
+	reservationStartTime, err := StrToTime(reservingRequest.ReservationStartTime)
+	if err != nil {
+		return err
+	}
+	reservationEndTime, err := StrToTime(reservingRequest.ReservationEndTime)
+	if err != nil {
+		return err
+	}
+	activityStartTime, err := StrToTime(reservingRequest.ActivityStartTime)
+	if err != nil {
+		return err
+	}
+	activityEndTime, err := StrToTime(reservingRequest.ActivityEndTime)
+	if err != nil {
+		return err
+	}
+
+	equipmentReservation := model.EquipmentReservation{
+		EquipmentReservationId: uint(reserveId),
+		EquipmentId:            equipmentId,
+		ReservationStartTime:   reservationStartTime,
+		ReservationEndTime:     reservationEndTime,
+		ActivityStartTime:      activityStartTime,
+		ActivityEndTime:        activityEndTime,
+	}
+
+	err = equipmentReservation.ChangeEquipmentReservation()
+	if err != nil {
+		return err
+	}
+
+	// 処理の中でエラーが発生しなかった場合、nilを返す。
+	return nil
+}
+
 /*
 パラメータで受け取ったIDの機材予約を論理削除するため、
 equipment_reservationモデルのDeleteEquipmentReservationメソッドを呼び出す。
@@ -88,7 +135,7 @@ func DeleteEquipmentReservation(equipmentIdStr string, reserveIdStr string) erro
 
 // 日時(string)をtime.Time型に変換する関数
 func StrToTime(dateStr string) (time.Time, error) {
-	date, err := time.Parse(time.RFC3339, dateStr)
+	date, err := time.Parse("2006-01-02 15:04:05", dateStr)
 	if err != nil {
 		return time.Time{}, err
 	}
