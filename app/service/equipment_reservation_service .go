@@ -9,7 +9,7 @@ func GetEquipmentReservationsByEquipmentId(equipmentId int) []model.EquipmentRes
 	return equipmentReservations
 }
 /*特定のユーザーの機材予約一覧を取得する*/
-func GetEquipmentReservationsByUserId(userId int) []model.EquipmentReservation{
+func GetEquipmentReservationsByUserId(userId int) []model.EquipmentReservationWithUser{
 	equipmentReservations := model.GetEquipmentReservationsByUserId(userId)
 	return equipmentReservations
 }
