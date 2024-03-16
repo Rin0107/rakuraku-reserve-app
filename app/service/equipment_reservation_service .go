@@ -4,7 +4,7 @@ import(
 	"app/model"
 )
 /*特定の機材の機材予約一覧を取得する*/
-func GetEquipmentReservationsByEquipmentId(equipmentId int) []model.EquipmentReservation{
+func GetEquipmentReservationsByEquipmentId(equipmentId int) []model.EquipmentReservationWithUser{
 	equipmentReservations := model.GetEquipmentReservationsByEquipmentId(equipmentId)
 	return equipmentReservations
 }
