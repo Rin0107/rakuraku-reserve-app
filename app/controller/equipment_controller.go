@@ -12,6 +12,23 @@ import (
 
 type EquipmentServiceImplementation struct{}
 
+/*
+機材予約を論理削除するメソッド
+正常に更新されたら、ステータスコード200と成功メッセージをJSONで返す。
+更新がエラーとなった場合は、ステータスコード404とエラーメッセージをJSONで返す。
+*/
+func DeleteEquipmentReservation(c *gin.Context) {
+	equipmentId := c.Param("equipmentId")
+	reserveId := c.Param("reserveId")
+
+	err := service.DeleteEquipmentReservation(equipmentId, reserveId)
+	if err != nil {
+		c.IndentedJSON(404, gin.H{"error": err.Error()})
+		return
+	}
+	c.IndentedJSON(200, gin.H{"message": "Reserved equipment successfully"})
+}
+
 // 機材一覧を取得するAPI（is_availableがtrue）
 func GetEquipments(c *gin.Context) {
 	equipments := service.GetEquipments()
@@ -81,4 +98,36 @@ func GetEquipmentById(c *gin.Context) {
 			"message":   message,
 		})
 	}
+}
+
+/*
+機材予約を変更するメソッド
+リクエストコンテキストから機材予約情報を取得し、サービス層を介してデータベースの更新を試みる。
+正常に更新されたら、ステータスコード200と成功メッセージをJSONで返す。
+更新がエラーとなった場合は、ステータスコード404とエラーメッセージをJSONで返す。
+*/
+func changeEquipmentReservation(c *gin.Context) {
+	equipmentId := c.Param("equipmentId")
+	reserveId := c.Param("reserveId")
+
+	var equipmentReservingRequest request.EquipmentReservingRequest
+
+	if err := c.ShouldBindJSON(&equipmentReservingRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	validate := validator.New()
+	err := validate.Struct(equipmentReservingRequest)
+	if err != nil {
+		c.IndentedJSON(404, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = service.ChangeEquipmentReservation(equipmentId, reserveId, equipmentReservingRequest)
+	if err != nil {
+		c.IndentedJSON(404, gin.H{"error": err.Error()})
+		return
+	}
+	c.IndentedJSON(200, gin.H{"message": "Changed equipment reservation successfully"})
 }
