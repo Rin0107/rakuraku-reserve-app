@@ -96,7 +96,6 @@ CREATE TABLE IF NOT EXISTS equipment_reservations(
     -- report_id SERIAL,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (equipment_id) REFERENCES equipments(equipment_id)
-    -- FOREIGN KEY (report_id) REFERENCES reports(report_id)
 );
 
 -- usersテーブルにデータを挿入
@@ -167,6 +166,10 @@ SELECT * FROM reports;
 INSERT INTO equipment_reservations (user_id, equipment_id, reservation_start_time, reservation_end_time, 
     activity_start_time, activity_end_time, deleted_at) VALUES
 (1, 1, '2024-01-21 09:00:00', '2024-01-21 12:00:00', '2024-01-21 10:00:00', '2024-01-21 11:30:00', NULL),
-(2, 2, '2024-02-08 14:00:00', '2024-02-08 17:00:00', '2024-02-08 15:00:00', '2024-02-08 16:30:00', NULL);
+(2, 2, '2025-02-08 14:00:00', '2025-02-08 17:00:00', '2024-02-08 15:00:00', '2024-02-08 16:30:00', NULL),
+(1, 3, '2025-02-21 09:00:00', '2025-02-21 12:00:00', '2024-02-21 10:00:00', '2024-02-21 11:30:00', NULL),
+(2, 2, '2025-02-21 14:00:00', '2025-02-21 17:00:00', '2024-02-21 15:00:00', '2024-02-21 16:30:00', NULL),
+(1, 1, '2025-02-21 09:00:00', '2025-02-21 12:00:00', '2024-02-21 10:00:00', '2024-02-21 11:30:00', NULL),
+(2, 3, '2024-02-08 14:00:00', '2024-02-08 17:00:00', '2024-02-08 15:00:00', '2024-02-08 16:30:00', '2024-02-08 16:30:00');
 -- equipment_reservationsテーブルのデータを確認
 SELECT * FROM equipment_reservations;
