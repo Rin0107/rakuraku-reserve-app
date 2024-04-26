@@ -8,6 +8,17 @@ import (
 
 func GetRouter() *gin.Engine {
 	r := gin.Default()
+	// CORS設定
+    r.Use(func(c *gin.Context) {
+        c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+        c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
+        if c.Request.Method == "OPTIONS" {
+            c.AbortWithStatus(http.StatusOK)
+            return
+        }
+        c.Next()
+    })
 	r.LoadHTMLGlob("view/*html")
 	r.GET("/api/equipments/", GetEquipments)
 	r.GET("/api/equipments/:equipmentId", GetEquipmentById)
